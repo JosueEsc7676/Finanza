@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Usuario</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .login-container {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 60px 50px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 900px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1e40af, #3b82f6, #06b6d4);
+        }
+
+        h2 {
+            text-align: center;
+            color: #0f172a;
+            margin-bottom: 40px;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px 32px;
+            align-items: start;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        select {
+            padding: 16px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 16px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 50px;
+        }
+
+        select option {
+            padding: 12px;
+            background: white;
+            color: #374151;
+        }
+
+        .submit-container {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 24px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            color: #374151;
+            border-color: #d1d5db;
+            background: #f9fafb;
+            transform: translateY(-1px);
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 18px 48px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(59, 130, 246, 0.4);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        /* Error message styling */
+        div[style*="color: red"] {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #dc2626 !important;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 2px solid #fecaca;
+            font-family: inherit;
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        div[style*="color: red"] p {
+            margin: 0;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 40px 30px;
+                margin: 20px;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+                margin-bottom: 30px;
+            }
+
+            button[type="submit"] {
+                padding: 16px 32px;
+                font-size: 14px;
+            }
+
+            .submit-container {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .back-button {
+                font-size: 13px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 15px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            input[type="date"],
+            select {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+        }
+
+        /* Subtle animations */
+        .login-container {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Input validation styling */
+        input:valid {
+            border-color: #10b981;
+        }
+
+        input:invalid:not(:placeholder-shown) {
+            border-color: #ef4444;
+        }
+
+        /* Professional hover effects */
+        input:hover,
+        select:hover {
+            border-color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Registro en FinanceApp</h2>
+
+    <!-- Mostrar error si el correo está duplicado -->
+    <div th:if="${error}" style="color: red; margin-bottom: 10px;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form th:action="@{/Registro}" th:object="${usuario}" method="post">
+        <div class="form-group">
+            <label class="form-label">Nombre Completo</label>
+            <input type="text" th:field="*{nombreCompleto}" placeholder="Ingrese su nombre completo" required />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Teléfono</label>
+            <input type="text" th:field="*{telefono}" placeholder="Número de teléfono" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Dirección</label>
+            <input type="text" th:field="*{direccion}" placeholder="Dirección completa" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Fecha de Cumpleaños</label>
+            <input type="date" th:field="*{fechaNacimiento}" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Correo Electrónico</label>
+            <input type="email" th:field="*{correo}" placeholder="correo@empresa.com" required />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input type="password" th:field="*{contrasena}" placeholder="Contraseña segura" required />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Género</label>
+            <select th:field="*{genero}">
+                <option value="">Seleccione una opción</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+
+        <div class="submit-container">
+            <button type="submit">Registrarse</button>
+            <a href="/login" class="back-button">← Volver al Login</a>
+        </div>
+    </form>
+</div>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9673083030fb78f8',t:'MTc1Mzg1OTM4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

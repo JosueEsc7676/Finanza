@@ -1,38 +1,51 @@
 package Com.Finanzas.FinanzeApp.controladores;
 
 import Com.Finanzas.FinanzeApp.modelos.Usuario;
-import Com.Finanzas.FinanzeApp.servicios.interfaces.IUsuarioServicio;
+import Com.Finanzas.FinanzeApp.servicios.interfaces.UsuarioServicio;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
-    private final IUsuarioServicio usuarioServicio;
+    @Autowired
+    private UsuarioServicio usuarioServicio;
 
-    public UsuarioController(IUsuarioServicio usuarioServicio) {
-        this.usuarioServicio = usuarioServicio;
+    @GetMapping("/buscar")
+    public ResponseEntity<Usuario> buscarUsuarioPorCorreo(@RequestParam String correo) {
+        Optional<Usuario> usuario = usuarioServicio.buscarPorCorreo(correo);
+        return usuario.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public List<Usuario> listarUsuarios() {
-        return usuarioServicio.obtenerTodos();
-    }
 
-    @PostMapping
-    public Usuario crearUsuario(@RequestBody Usuario usuario) {
-        return usuarioServicio.guardar(usuario);
-    }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioActualizado) {
+        Optional<Usuario> usuarioExistente = usuarioServicio.buscarPorId(id);
+        if (usuarioExistente.isEmpty()) {
+            return ResponseEntity.status(404).body("Usuario no encontrado");
+        }
 
-    @GetMapping("/{id}")
-    public Usuario obtenerPorId(@PathVariable Long id) {
-        return usuarioServicio.buscarPorId(id);
+        Usuario usuario = usuarioExistente.get();
+
+        usuario.setCorreo(usuarioActualizado.getCorreo());
+
+        Usuario actualizado = usuarioServicio.actualizar(usuario);
+        return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
-        usuarioServicio.eliminar(id);
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
+        boolean eliminado = usuarioServicio.eliminarPorId(id);
+        if (eliminado) {
+            return ResponseEntity.ok("Usuario eliminado");
+        } else {
+            return ResponseEntity.status(404).body("Usuario no encontrado");
+        }
     }
 }

@@ -1,0 +1,9 @@
+<!DOCTYPE html> <html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head> <meta charset="UTF-8"> <title>Recuperar contraseña</title>
+    <link rel="stylesheet" href="/css/login.css"> </head>
+<body> <div class="login-container"> <h2>Recuperar contraseña</h2>
+    <form th:action="@{/Recuperar}" method="post"> <input type="email" name="correo" placeholder="Correo electrónico" required>
+        <input type="password" name="nuevaContrasena" placeholder="Nueva contraseña" required>
+        <button type="submit">Actualizar contraseña</button> </form>
+    <p th:if="${mensaje}" th:text="${mensaje}" style="color:green;"></p> <!--/*@thymesVar id="error" type=""*/-->
+    <p th:if="${error}" th:text="${error}" style="color:red;"></p> </div> </body> </html>

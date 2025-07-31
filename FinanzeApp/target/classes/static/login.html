@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | FinanzApp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .card {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .icon {
+      font-size: 48px;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .link, .google-button {
+      display: block;
+      margin-top: 1rem;
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .google-button {
+      font-weight: bold;
+    }
+
+    hr {
+      margin: 2rem 0;
+      border: none;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+<div class="login-container">
+  <div class="card">
+    <div class="icon">&#128179;</div>
+    <h1>FinanzApp</h1>
+    <p>Tu gestor de finanzas personales</p>
+
+    <form method="post" th:action="@{/login}">
+      <input type="text" name="username" placeholder="ejemplo@correo.com" required>
+      <input type="password" name="password" placeholder="Contraseña" required>
+      <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <a class="link" th:href="@{/recuperar}">¿Olvidaste tu contraseña?</a>
+    <hr>
+    <a class="google-button" th:href="@{/oauth2/authorization/google}">
+      Continuar con Google
+    </a>
+  </div>
+</div>
+</body>
+</html>
