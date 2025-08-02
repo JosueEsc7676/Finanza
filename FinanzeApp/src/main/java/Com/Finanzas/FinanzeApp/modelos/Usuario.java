@@ -19,7 +19,11 @@ public class Usuario {
     private String ocupacion;
     private String genero;
 
-    // Getters y Setters
+    @Column(name = "token_recuperacion")
+    private String tokenRecuperacion;
+
+    // --- Getters y Setters ---
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -28,9 +32,6 @@ public class Usuario {
 
     public String getContrasena() { return contrasena; }
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
-
-
-
 
     public String getNombreCompleto() { return nombreCompleto; }
     public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
@@ -49,4 +50,12 @@ public class Usuario {
 
     public String getGenero() { return genero; }
     public void setGenero(String genero) { this.genero = genero; }
+
+    public String getTokenRecuperacion() {
+        return tokenRecuperacion;
+    }
+
+    public void setTokenRecuperacion(String tokenRecuperacion) {
+        this.tokenRecuperacion = tokenRecuperacion;
+    }
 }

@@ -1,9 +1,56 @@
-<!DOCTYPE html> <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head> <meta charset="UTF-8"> <title>Recuperar contraseña</title>
-    <link rel="stylesheet" href="/css/login.css"> </head>
-<body> <div class="login-container"> <h2>Recuperar contraseña</h2>
-    <form th:action="@{/Recuperar}" method="post"> <input type="email" name="correo" placeholder="Correo electrónico" required>
-        <input type="password" name="nuevaContrasena" placeholder="Nueva contraseña" required>
-        <button type="submit">Actualizar contraseña</button> </form>
-    <p th:if="${mensaje}" th:text="${mensaje}" style="color:green;"></p> <!--/*@thymesVar id="error" type=""*/-->
-    <p th:if="${error}" th:text="${error}" style="color:red;"></p> </div> </body> </html>
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Contraseña</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        input[type=email], button {
+            width: 100%;
+            padding: 0.7rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .mensaje {
+            color: green;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<form action="/Recuperar" method="post">
+    <h2>Recuperar Contraseña</h2>
+    <label for="correo">Correo electrónico:</label>
+    <input type="email" name="correo" id="correo" required>
+
+    <button type="submit">Enviar enlace</button>
+
+    <div class="mensaje" th:if="${mensaje}" th:text="${mensaje}"></div>
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+</form>
+</body>
+</html>
