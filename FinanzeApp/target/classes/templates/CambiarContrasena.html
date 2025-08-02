@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Recuperar Contraseña</title>
+    <title>Restablecer Contraseña</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@
             text-align: center;
             margin-bottom: 1rem;
         }
-        input[type=email], button {
+        input[type=password], button {
             width: 100%;
             padding: 0.7rem;
             margin-top: 0.5rem;
@@ -42,12 +42,15 @@
     </style>
 </head>
 <body>
-<form action="/Recuperar" method="post">
-    <h2>Recuperar Contraseña</h2>
-    <label for="correo">Correo electrónico:</label>
-    <input type="email" name="correo" id="correo" required>
+<form action="/Recuperar/reset" method="post">
+    <h2>Restablecer Contraseña</h2>
 
-    <button type="submit">Enviar enlace</button>
+    <input type="hidden" name="token" th:value="${token}">
+
+    <label for="nuevaContrasena">Nueva Contraseña:</label>
+    <input type="password" name="nuevaContrasena" id="nuevaContrasena" required>
+
+    <button type="submit">Actualizar Contraseña</button>
 
     <div class="mensaje" th:if="${mensaje}" th:text="${mensaje}"></div>
     <div class="error" th:if="${error}" th:text="${error}"></div>
