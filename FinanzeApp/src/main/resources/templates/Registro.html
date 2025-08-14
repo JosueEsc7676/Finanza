@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Registro - FinanzeApp</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -12,6 +14,7 @@
         }
 
         body {
+        flex-wrap: wrap;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background:
                 linear-gradient(135deg, rgba(15, 23, 42, 0.03) 0%, rgba(30, 41, 59, 0.05) 100%),
@@ -148,6 +151,7 @@
 
         .form-group input,
         .form-group select {
+        max-width: 100%;
             width: 100%;
             padding: 0.5rem 0.75rem;
             border: 2px solid #e2e8f0;
@@ -309,30 +313,44 @@
             background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
             margin: 0.75rem 0;
         }
+@media (hover: none) {
+    .form-group:hover {
+        transform: none;
+    }
+
+    .btn:hover,
+    .btn-secondary:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
 
         /* Responsive design */
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
+       @media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
 
-            .registro-container {
-                padding: 1.5rem 1.25rem;
-                max-width: 450px;
-            }
-        }
+    .registro-container {
+        padding: 1.5rem;
+        max-width: 100%;
+        margin: 1rem;
+    }
 
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
+    .registro-container h2 {
+        font-size: 1.5rem;
+    }
 
-        /* Responsive mobile */
-        @media (max-width: 480px) {
-            .registro-container {
-                padding: 2rem 1.5rem;
-                margin: 1rem;
-            }
+    .btn, .btn-secondary {
+        font-size: 0.875rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 0.875rem;
+        padding: 0.75rem 1rem;
+    }
+}
 
             .registro-container h2 {
                 font-size: 1.875rem;
@@ -347,6 +365,10 @@
         .form-group:hover {
             transform: translateY(-1px);
         }
+        html {
+    font-size: clamp(14px, 2vw, 16px);
+}
+
     </style>
 </head>
 <body>
@@ -393,8 +415,6 @@
                         <option value="">Seleccionar género</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Femenino">Femenino</option>
-                        <option value="No binario">No binario</option>
-                        <option value="Prefiero no decir">Prefiero no decir</option>
                     </select>
                 </div>
             </div>

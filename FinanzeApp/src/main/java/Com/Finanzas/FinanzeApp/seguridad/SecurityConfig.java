@@ -1,92 +1,42 @@
-////package Com.Finanzas.FinanzeApp.seguridad;
-////
-////import org.springframework.context.annotation.Bean;
-////import org.springframework.context.annotation.Configuration;
-////import org.springframework.security.config.Customizer;
-////import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-////import org.springframework.security.web.SecurityFilterChain;
-////import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-////import org.springframework.security.crypto.password.PasswordEncoder;
-////
-////@Configuration
-////public class SecurityConfig {
-////
-////    @Bean
-////    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-////        http
-////                .authorizeHttpRequests(auth -> auth
-////                        .requestMatchers(
-////                                "/login", "/registro", "/recuperar", "/css/**", "/js/**", "/images/**", "/webjars/**"
-////                        ).permitAll()
-////                        .anyRequest().authenticated()
-////                )
-////                .formLogin(form -> form
-////                        .loginPage("/login")
-////                        .defaultSuccessUrl("/inicio", true)
-////                        .failureUrl("/login?error=true")
-////                        .permitAll()
-////                )
-////                .logout(logout -> logout
-////                        .logoutSuccessUrl("/login?logout=true")
-////                        .permitAll()
-////                )
-////                .csrf(csrf -> csrf.disable());
-////
-////        return http.build();
-////    }
-////
-////    @Bean
-////    public PasswordEncoder passwordEncoder() {
-////        return new BCryptPasswordEncoder();
-////    }
-////}
-//package Com.Finanzas.FinanzeApp.seguridad;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.annotation.*;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@Configuration
-//public class SecurityConfig {
-//
-//    @Autowired
-//    private JwtFilter jwtFilter;
-//
-//
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf(csrf -> csrf.disable())
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/**", "/Recuperar", "/login", "/Registro").permitAll()
-//                        .anyRequest().authenticated());
-//
-//        // Filtro JWT desactivado:
-//        // .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
-//
-//}
 package Com.Finanzas.FinanzeApp.seguridad;
 
-import org.springframework.context.annotation.*;
+import Com.Finanzas.FinanzeApp.servicios.interfaces.UsuarioDetailService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    private UsuarioDetailService userDetailsService;
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/Registro", "/CambiarContrasena", "/Recuperar/**", "/css/**", "/js/**").permitAll()
-
+                        .requestMatchers(
+                                "/",
+                                "/login",
+                                "/Registro",
+                                "/Recuperar",
+                                "/Recuperar/**",
+                                "/CambiarContrasena",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -99,7 +49,14 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf.disable())
+                // Mantener sesión HTTP si usas login de formulario
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                );
+
+        // Muy importante: registrar el filtro JWT ANTES del UsernamePasswordAuthenticationFilter
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -107,5 +64,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 }

@@ -20,7 +20,12 @@ public class UsuarioServiceImpl implements UsuarioServicio {
         usuario.setContrasena(new BCryptPasswordEncoder().encode(usuario.getContrasena()));
         return usuarioRepo.save(usuario);
     }
-
+    @Override
+    public Long obtenerIdPorCorreo(String correo) {
+        Usuario usuario = usuarioRepo.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con correo: " + correo));
+        return usuario.getId();
+    }
     @Override
     public Optional<Usuario> buscarPorCorreo(String correo) {
         return usuarioRepo.findByCorreo(correo);

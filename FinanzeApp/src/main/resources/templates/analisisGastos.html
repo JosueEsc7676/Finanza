@@ -1,0 +1,1074 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" lang="es" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">-->
+
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Análisis de Gastos</title>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+
+<!--<style>-->
+
+
+<!--</style>-->
+<!--</head>-->
+<!--<body>-->
+<!--&lt;!&ndash; Resto del código HTML se mantiene igual &ndash;&gt;-->
+<!--<section layout:fragment="content">-->
+<!--   </section>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Análisis de Gastos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+--primary-color: #3b82f6;
+--primary-hover: #2563eb;
+--secondary-color: #64748b;
+--success-color: #10b981;
+--warning-color: #f59e0b;
+--danger-color: #ef4444;
+--border-radius: 10px;
+--shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+--shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.15);
+--transition: all 0.2s ease;
+}
+
+[data-theme="light"] {
+--bg-primary: #ffffff;
+--bg-secondary: #f8fafc;
+--bg-tertiary: #f1f5f9;
+--text-primary: #1e293b;
+--text-secondary: #64748b;
+--text-muted: #94a3b8;
+--border-color: #e2e8f0;
+--card-bg: #ffffff;
+--card-border: #e2e8f0;
+--card-accent: #e2e8f0;
+--table-header: #f1f5f9;
+}
+
+[data-theme="dark"] {
+--bg-primary: #0a0a12;
+--bg-secondary: #12121d;
+--bg-tertiary: #1a1a2a;
+--text-primary: #f8fafc;
+--text-secondary: #cbd5e1;
+--text-muted: #7e8ba3;
+--border-color: #2a2a3a;
+--card-bg: #12121d;
+--card-border: #2a2a3a;
+--card-accent: #2a2a3a;
+--table-header: #1a1a2a;
+}
+
+/* Base Styles */
+body {
+font-family: 'Inter', system-ui, sans-serif;
+background-color: var(--bg-primary);
+color: var(--text-primary);
+line-height: 1.5;
+margin: 0;
+padding: 0;
+font-size: 0.9rem;
+}
+
+.container {
+max-width: 1400px;
+margin: 0 auto;
+padding: 1.25rem;
+}
+
+/* Compact Typography */
+h1, h2, h3, h4 {
+font-weight: 600;
+line-height: 1.3;
+margin: 0 0 0.75rem 0;
+margin-top: 90px;
+}
+
+h1 {
+font-size: 1.75rem;
+color: var(--primary-color);
+}
+
+h2 {
+font-size: 1.5rem;
+}
+
+h3 {
+font-size: 1.25rem;
+}
+
+.muted {
+color: var(--text-muted);
+margin-bottom: 1.25rem;
+font-size: 0.95rem;
+}
+
+/* Compact Cards */
+.card {
+background-color: var(--card-bg);
+border-radius: var(--border-radius);
+border: 1px solid var(--card-border);
+box-shadow: var(--shadow);
+padding: 1.25rem;
+margin-bottom: 1rem;
+transition: var(--transition);
+}
+
+.card:hover {
+box-shadow: var(--shadow-lg);
+transform: translateY(-1px);
+}
+
+.kpi-card {
+padding: 1rem;
+text-align: center;
+position: relative;
+}
+
+.kpi-card::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 50%;
+height: 3px;
+background: linear-gradient(to right, var(--primary-color), var(--success-color));
+border-radius: 0 0 3px 3px;
+}
+
+.kpi-card .value {
+font-size: 1.75rem;
+font-weight: 700;
+margin: 0.25rem 0;
+color: var(--primary-color);
+}
+
+.kpi-card h3 {
+font-size: 1rem;
+color: var(--text-secondary);
+font-weight: 500;
+}
+
+/* Compact Toolbar */
+/* Toolbar Compacta con KPIs */
+/* Toolbar Premium Integrada */
+.toolbar {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 1.5rem;
+margin-bottom: 1.5rem;
+}
+
+.toolbar .filter-card {
+background-color: var(--card-bg);
+border-radius: var(--border-radius);
+box-shadow: var(--shadow-lg);
+padding: 0.75rem 1.25rem;
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 1.25rem;
+border: 1px solid var(--border-color);
+position: relative;
+overflow: hidden;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.toolbar .filter-card:hover {
+transform: translateY(-2px);
+box-shadow: var(--shadow-xl);
+}
+
+.toolbar .filter-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 4px;
+height: 100%;
+background: linear-gradient(to bottom, var(--primary-color), var(--success-color));
+}
+
+.toolbar .filter-form {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 1rem;
+}
+
+.toolbar .filter-group {
+display: flex;
+flex-direction: column;
+position: relative;
+}
+
+.toolbar .filter-label {
+font-size: 0.75rem;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.05em;
+margin-bottom: 0.25rem;
+font-weight: 600;
+}
+
+.toolbar .filter-input {
+padding: 0.5rem 0.75rem;
+border: 1px solid var(--border-color);
+border-radius: 6px;
+font-size: 0.85rem;
+background-color: var(--bg-secondary);
+color: var(--text-primary);
+transition: all 0.2s ease;
+min-width: 160px;
+}
+
+.toolbar .filter-input:focus {
+outline: none;
+border-color: var(--primary-color);
+box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.toolbar .filter-actions {
+display: flex;
+gap: 0.75rem;
+margin-left: 0.5rem;
+}
+
+.toolbar .kpi-container {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 1.5rem;
+background-color: var(--card-bg);
+border-radius: var(--border-radius);
+box-shadow: var(--shadow-lg);
+padding: 0.75rem 1.25rem;
+border: 1px solid var(--border-color);
+flex-grow: 1;
+}
+
+.toolbar .kpi-item {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+min-width: 120px;
+padding-right: 1.25rem;
+position: relative;
+}
+
+.toolbar .kpi-item:not(:last-child)::after {
+content: '';
+position: absolute;
+right: 0;
+top: 50%;
+transform: translateY(-50%);
+height: 60%;
+width: 1px;
+background-color: var(--border-color);
+}
+
+.toolbar .kpi-label {
+font-size: 0.75rem;
+color: var(--text-muted);
+text-transform: uppercase;
+letter-spacing: 0.05em;
+margin-bottom: 0.25rem;
+white-space: nowrap;
+}
+
+.toolbar .kpi-value {
+font-size: 1.05rem;
+font-weight: 700;
+color: var(--text-primary);
+white-space: nowrap;
+}
+
+.toolbar .kpi-value.positive {
+color: var(--success-color);
+}
+
+.toolbar .kpi-value.negative {
+color: var(--danger-color);
+}
+
+/* Botones premium */
+.toolbar .btn {
+padding: 0.5rem 1rem;
+border-radius: 6px;
+font-size: 0.85rem;
+font-weight: 600;
+transition: all 0.2s ease;
+border: none;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.toolbar .btn-primary {
+background-color: var(--primary-color);
+color: white;
+box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.toolbar .btn-primary:hover {
+background-color: var(--primary-hover);
+transform: translateY(-1px);
+box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.toolbar .btn-ghost {
+background-color: transparent;
+color: var(--primary-color);
+border: 1px solid var(--primary-color);
+}
+
+.toolbar .btn-ghost:hover {
+background-color: rgba(59, 130, 246, 0.1);
+}
+
+.toolbar .btn-secondary {
+background-color: var(--bg-tertiary);
+color: var(--text-primary);
+}
+
+.toolbar .btn-secondary:hover {
+background-color: var(--border-color);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+.toolbar {
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.toolbar .filter-card,
+.toolbar .kpi-container {
+    width: 100%;
+}
+
+.toolbar .kpi-item::after {
+    display: none;
+}
+}
+
+@media (max-width: 768px) {
+.toolbar .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.toolbar .filter-actions {
+    margin-left: 0;
+    justify-content: flex-end;
+}
+
+.toolbar .kpi-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.toolbar .kpi-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.toolbar .kpi-item:last-child {
+    border-bottom: none;
+}
+}
+
+
+
+
+/* Compact Buttons */
+.btn {
+padding: 0.5rem 1rem;
+border-radius: 6px;
+font-size: 0.85rem;
+font-weight: 500;
+transition: var(--transition);
+border: none;
+cursor: pointer;
+height: fit-content;
+}
+
+.btn:not(.ghost) {
+background-color: var(--primary-color);
+color: white;
+}
+
+.btn:not(.ghost):hover {
+background-color: var(--primary-hover);
+}
+
+.btn.secondary {
+background-color: var(--bg-tertiary);
+color: var(--text-primary);
+}
+
+.btn.secondary:hover {
+background-color: var(--border-color);
+}
+
+.btn.ghost {
+background-color: transparent;
+color: var(--primary-color);
+border: 1px solid var(--primary-color);
+}
+
+.btn.ghost:hover {
+background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Compact Grid Layout */
+.kpis {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+gap: 1rem;
+margin-bottom: 1.25rem;
+}
+
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+gap: 1rem;
+margin-bottom: 1rem;
+}
+
+.cards-2 {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+gap: 1rem;
+}
+
+/* Compact Tables */
+.table {
+width: 100%;
+border-collapse: collapse;
+font-size: 0.85rem;
+margin-top: 0.75rem;
+}
+
+.table th {
+background-color: var(--table-header);
+color: var(--text-secondary);
+font-weight: 600;
+padding: 0.75rem;
+text-align: left;
+}
+
+.table td {
+padding: 0.75rem;
+border-bottom: 1px solid var(--border-color);
+color: var(--text-secondary);
+}
+
+.table tr:last-child td {
+border-bottom: none;
+}
+
+.table tr:hover td {
+background-color: var(--bg-tertiary);
+color: var(--text-primary);
+}
+
+/* Compact Badges */
+.badge {
+padding: 0.25rem 0.5rem;
+border-radius: 50px;
+font-size: 0.75rem;
+font-weight: 600;
+}
+
+.badge.green {
+background-color: rgba(16, 185, 129, 0.1);
+color: var(--success-color);
+}
+
+.badge.red {
+background-color: rgba(239, 68, 68, 0.1);
+color: var(--danger-color);
+}
+
+/* Compact Legend */
+.legend {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 0.75rem;
+margin-top: 1rem;
+font-size: 0.8rem;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+}
+
+.legend-dot {
+width: 10px;
+height: 10px;
+border-radius: 50%;
+margin-right: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+.container {
+    padding: 1rem;
+}
+
+.kpis {
+    grid-template-columns: repeat(2, 1fr);
+}
+}
+
+@media (max-width: 640px) {
+.kpis, .grid, .cards-2 {
+    grid-template-columns: 1fr;
+}
+
+.toolbar {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.toolbar label {
+    min-width: auto;
+}
+
+.btn {
+    width: 100%;
+}
+}
+
+/* Dark Mode Enhancements */
+[data-theme="dark"] {
+--shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+--shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.4);
+
+.card {
+    box-shadow: var(--shadow);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.table tr:hover td {
+    background-color: var(--bg-tertiary);
+}
+}
+
+/* Chart Container */
+.chart-container {
+min-height: 220px;
+position: relative;
+}
+    :root {
+        --primary-color: #3b82f6;
+        --primary-hover: #2563eb;
+        --secondary-color: #64748b;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --border-radius: 10px;
+        --shadow: 0 2px 6px rgba(0,0,0,0.08);
+        --shadow-lg: 0 6px 12px rgba(0,0,0,0.15);
+        --transition: all 0.25s ease;
+    }
+
+    [data-theme="light"] {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-tertiary: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --border-color: #e2e8f0;
+        --card-bg: #ffffff;
+        --card-border: #e2e8f0;
+        --table-header: #f1f5f9;
+    }
+
+    [data-theme="dark"] {
+        --bg-primary: #0b0b14;
+        --bg-secondary: #14141e;
+        --bg-tertiary: #1c1c2a;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-muted: #8a93a5;
+        --border-color: #2f2f40;
+        --card-bg: #14141e;
+        --card-border: #2f2f40;
+        --table-header: #1c1c2a;
+    }
+
+    /* General */
+    body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+        font-size: 0.92rem;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 1.5rem;
+    }
+
+    /* Titulares */
+    h1, h2, h3, h4 {
+        font-weight: 600;
+        line-height: 1.3;
+        margin-top: 90px;
+        margin-bottom: 0.75rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        color: var(--primary-color);
+    }
+
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.2rem; }
+
+    .muted {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Tarjetas */
+    .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--border-radius);
+        padding: 1.25rem;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+    }
+
+    .card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-2px);
+    }
+
+    /* Toolbar */
+    .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .filter-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition);
+    }
+    .filter-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .filter-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary-color), var(--success-color));
+    }
+
+    .filter-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+    }
+
+    .filter-input {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        min-width: 160px;
+        transition: var(--transition);
+    }
+    .filter-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Botones */
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .btn-ghost {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+    }
+    .btn-ghost:hover {
+        background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-secondary {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+    .btn-secondary:hover {
+        background-color: var(--border-color);
+    }
+
+    /* Tablas */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        margin-top: 0.75rem;
+    }
+
+    .table th {
+        background-color: var(--table-header);
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 0.75rem;
+        text-align: left;
+    }
+    .table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-secondary);
+    }
+    .table tr:hover td {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    /* Badges */
+    .badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .badge.green {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+    }
+    .badge.red {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
+    }
+
+    /* Leyenda Chart */
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        font-size: 0.8rem;
+    }
+    .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .toolbar { flex-direction: column; }
+        .btn { width: 100%; }
+    }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <h1>Análisis de Gastos</h1>
+        <p class="muted" th:text="${sugerencia}">Sugerencia</p>
+
+        <div class="toolbar">
+            <div class="filter-card">
+                <form class="filter-form" method="get" th:action="@{/analisis}">
+                    <div class="filter-group">
+                        <label class="filter-label">Desde</label>
+                        <input class="filter-input" type="date" name="desde"
+                               th:value="${#temporals.format(desde, 'yyyy-MM-dd')}" required>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Hasta</label>
+                        <input class="filter-input" type="date" name="hasta"
+                               th:value="${#temporals.format(hasta, 'yyyy-MM-dd')}" required>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="icon-filter"></i> Filtrar
+                        </button>
+                        <a class="btn btn-ghost" th:href="@{/analisis}">
+                            <i class="icon-calendar"></i> Mes actual
+                        </a>
+                        <a class="btn btn-secondary"
+                           th:href="@{/analisis/export/csv(desde=${desde}, hasta=${hasta})}">
+                            <i class="icon-download"></i> Exportar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="kpi-container">
+                <div class="kpi-item">
+                    <span class="kpi-label">Total gastos</span>
+                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Categoría principal</span>
+                    <span class="kpi-value" th:text="${kpis.categoriaMasCostosa}">-</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Variación mensual</span>
+                    <span class="kpi-value" th:classappend="${kpis.variacionMesAnterior != null && kpis.variacionMesAnterior < 0} ? 'negative' : 'positive'"
+                          th:text="${(kpis.variacionMesAnterior != null ? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT') : '0.0') + '%'}">
+                0.0%
+            </span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Promedio diario</span>
+                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpis">
+            <div class="card kpi">
+                <h3>Total de gastos</h3>
+                <div class="value"
+                     th:text="${#numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                    0.00
+                </div>
+            </div>
+            <div class="card kpi">
+                <h3>Categoría más costosa</h3>
+                <div class="value" th:text="${kpis.categoriaMasCostosa}">-</div>
+            </div>
+            <div class="card kpi">
+                <h3>Variación vs mes anterior</h3>
+                <div class="value">
+                <span th:text="${
+                     (kpis.variacionMesAnterior != null
+                        ? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT')
+                        : '0.0')
+                     + '%'}">
+                    0.0%
+                </span>
+                </div>
+            </div>
+            <div class="card kpi">
+                <h3>Promedio diario</h3>
+                <div class="value"
+                     th:text="${#numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                    0.00
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid">
+            <div class="card">
+                <h3>Gastos por categoría</h3>
+                <canvas id="chartCategorias" height="220"></canvas>
+                <div class="legend" id="legendCategorias"></div>
+            </div>
+            <div class="card">
+                <h3>Tendencia (últimos meses)</h3>
+                <canvas id="chartTendencia" height="220"></canvas>
+            </div>
+        </div>
+
+        <div class="cards-2" style="margin-top:16px;">
+            <div class="card">
+                <h3>Top 5 gastos</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t : ${top5}">
+                        <td th:text="${t.descripcion}">-</td>
+                        <td th:text="${t.categoria}">-</td>
+                        <td th:text="${t.fecha}">-</td>
+                        <td th:text="${#numbers.formatDecimal(t.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                            0.00
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3>Presupuestos por categoría</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Gastado</th>
+                        <th>Presupuesto</th>
+                        <th>Restante</th>
+                        <th>Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${presupuestos}">
+                        <td th:text="${p.categoria}">-</td>
+                        <td th:text="${#numbers.formatDecimal(p.gasto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td th:text="${#numbers.formatDecimal(p.presupuesto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td th:text="${#numbers.formatDecimal(p.restante ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td>
+                        <span th:classappend="${p.excedido} ? 'badge red' : 'badge green'"
+                              th:text="${p.excedido} ? 'Excedido' : 'OK'">OK</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+            <h3>Detalle por categoría</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>%</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${analisis}">
+                    <td th:text="${item.categoria}">Categoría</td>
+                    <td th:text="${#numbers.formatDecimal(item.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                    <td th:text="${(item.porcentaje != null
+                                ? #numbers.formatDecimal(item.porcentaje, 0, 'COMMA', 1, 'POINT')
+                                : '0.0') + '%'}">0.0%</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        const categorias = /*[[${categorias}]]*/ [];
+        const totales = /*[[${totales}]]*/ [];
+        const meses = /*[[${meses}]]*/ [];
+        const totalesMensuales = /*[[${totalesMensuales}]]*/ [];
+
+        // Paleta de colores
+        const palette = ['#FF6384','#36A2EB','#FFCE56','#66BB6A','#9575CD','#FFA726','#8D6E63','#26C6DA','#EC407A','#AB47BC'];
+
+        // Pie: gastos por categoría
+        const ctxCat = document.getElementById('chartCategorias');
+        const chartCategorias = new Chart(ctxCat, {
+            type: 'pie',
+            data: {
+                labels: categorias,
+                datasets: [{ data: totales, backgroundColor: categorias.map((_, i) => palette[i % palette.length]) }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = totales.reduce((a,b)=>a+b,0);
+                                const pct = total > 0 ? (value/total*100) : 0;
+                                return `${context.label}: ${value.toFixed(2)} USD (${pct.toFixed(1)}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Leyenda custom
+        const legend = document.getElementById('legendCategorias');
+        categorias.forEach((c, i) => {
+            const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = palette[i % palette.length];
+            const label = document.createElement('span'); label.textContent = ` ${c}`;
+            const wrap = document.createElement('span'); wrap.style.marginRight='10px'; wrap.append(dot,label);
+            legend.appendChild(wrap);
+        });
+
+        // Línea: tendencia mensual
+        const ctxTrend = document.getElementById('chartTendencia');
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [{ label: 'Gastos', data: totalesMensuales, borderColor: '#4CAF50', backgroundColor: 'rgba(76,175,80,0.1)', tension: 0.3, fill: true }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+    </script></section>
+</body>
+</html>
