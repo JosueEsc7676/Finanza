@@ -2,373 +2,413 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8">
-  <title>Gestión de Categorías</title>
-  <style>
-    /* Actualizando estilos para que coincidan con el diseño del layout principal */
-    .titulo {
-        text-align: center;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 2rem;
-        color: var(--text-primary);
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        position: relative;
-    }
-
-    .titulo::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 4px;
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        border-radius: 2px;
-    }
-
-    .contenedor-flex {
-        display: flex;
-        justify-content: center;
-        gap: 2rem;
-        flex-wrap: wrap;
-        padding: 2rem 1rem;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-
-    .card {
-        background: var(--bg-primary);
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: var(--shadow);
-        width: 100%;
-        max-width: 450px;
-        border: 1px solid var(--border-color);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        animation: fadeInUp 0.6s ease-out;
-    }
-
-    .card.table-card {
-        max-width: 650px;
-    }
-
-    .table-container {
-        max-height: 400px;
-        overflow-y: auto;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-    }
-
-    .card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .card:nth-child(2) {
-        animation-delay: 0.1s;
-    }
-
-    h3 {
-        margin-top: 0;
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        color: var(--text-primary);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    h3::before {
-        content: '📋';
-        font-size: 1.2rem;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    input, select {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        margin-bottom: 1.5rem;
-        border-radius: 12px;
-        border: 2px solid var(--border-color);
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-sizing: border-box;
-    }
-
-    input:focus, select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        transform: translateY(-1px);
-    }
-
-    input:hover, select:hover {
-        border-color: var(--primary-color);
-    }
-
-    button {
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        color: white;
-        padding: 0.8rem 1.5rem;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        width: 100%;
-        font-weight: 600;
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s;
-    }
-
-    button:hover::before {
-        left: 100%;
-    }
-
-    button:hover {
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-    }
-
-    button:active {
-        transform: translateY(0);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 0;
-        color: var(--text-secondary);
-        background: var(--bg-primary);
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-    }
-
-    thead {
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        color: white;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-
-    th {
-        padding: 1rem;
-        text-align: left;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 0.9rem;
-    }
-
-    td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border-color);
-        transition: background-color 0.2s ease;
-    }
-
-    tr:hover td {
-        background-color: var(--bg-secondary);
-    }
-
-    tr:last-child td {
-        border-bottom: none;
-    }
-
-    .btn {
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 600;
-        text-decoration: none;
-        margin-right: 0.5rem;
-        display: inline-block;
-        transition: all 0.3s ease;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-
-    .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .btn.edit {
-        background: linear-gradient(135deg, #10b981, #059669);
-    }
-
-    .btn.edit:hover {
-        background: linear-gradient(135deg, #059669, #047857);
-    }
-
-    .btn.delete {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    .btn.delete:hover {
-        background: linear-gradient(135deg, #dc2626, #b91c1c);
-    }
-
-    @media (max-width: 900px) {
-        .contenedor-flex {
-            flex-direction: column;
-            align-items: center;
-            padding: 1rem;
+    <meta charset="UTF-8">
+    <title>Gestión de Categorías</title>
+    <style>
+        .titulo {
+            text-align: center;
+            font-family: 'Raleway', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
         }
 
-        .titulo {
-            font-size: 2rem;
+        .titulo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            border-radius: 2px;
+        }
+
+        .contenedor-flex {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .card {
-            padding: 1.5rem;
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out;
         }
 
         .card.table-card {
-            max-width: 100%;
+            max-width: 650px;
+        }
+
+        .table-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3::before {
+            content: '📋';
+            font-size: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: translateY(-1px);
+        }
+
+        input:hover, select:hover {
+            border-color: var(--primary-color);
+        }
+
+        .xd, .selc {
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        button {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-size: 0.9rem;
         }
 
-        th, td {
-            padding: 0.8rem 0.5rem;
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
         }
-    }
 
-    /* Scrollbar personalizada */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: var(--bg-secondary);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: var(--primary-color);
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--primary-hover);
-    }
-
-    /* Animaciones */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
+        tr:hover td {
+            background-color: rgba(99, 102, 241, 0.05);
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        tr:last-child td {
+            border-bottom: none;
         }
-    }
-  </style>
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            margin-right: 0.5rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn.edit {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn.edit:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+        }
+
+        .btn.delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .btn.delete:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        @media (max-width: 900px) {
+            .contenedor-flex {
+                flex-direction: column;
+                align-items: center;
+                padding: 1rem;
+            }
+
+            .titulo {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .card.table-card {
+                max-width: 100%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.8rem 0.5rem;
+            }
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Variables CSS para modo claro y oscuro */
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --navbar-height: 80px;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --header-gradient: linear-gradient(135deg, #2563eb, #4f46e5);
+            --scrollbar-thumb: rgba(38, 78, 160, 0.5);
+            --scrollbar-thumb-hover: rgba(38, 78, 160, 0.7);
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --primary-color: #60a5fa;
+            --success-color: #4ade80;
+            --danger-color: #f87171;
+        }
+    </style>
 </head>
 <body>
 
 <section layout:fragment="content">
-  <h2 class="titulo">Gestión de Categorías</h2>
+    <h2 class="titulo">Gestión de Categorías</h2>
 
-  <div class="contenedor-flex">
-    <!-- Formulario a la izquierda -->
-    <div class="card">
-      <h3 th:text="${categoria.id != null} ? 'Editar Categoría' : 'Nueva Categoría'"></h3>
-      <form th:action="${categoria.id != null} ? @{'/categorias/editar/' + ${categoria.id}} : @{/categorias/nueva}"
-            th:object="${categoria}" method="post">
-        <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" required th:field="*{nombre}" />
+    <div class="contenedor-flex">
+        <!-- Formulario a la izquierda -->
+        <div class="card">
+            <h3 th:text="${categoria.id != null} ? 'Editar Categoría' : 'Nueva Categoría'"></h3>
+            <form th:action="${categoria.id != null} ? @{'/categorias/editar/' + ${categoria.id}} : @{/categorias/nueva}"
+                  th:object="${categoria}" method="post">
+                <label for="nombre">Nombre</label>
+                <input class="xd" type="text" id="nombre" required th:field="*{nombre}" />
 
-        <label for="tipo">Tipo</label>
-        <select id="tipo" required th:field="*{tipo}">
-          <option value="" disabled th:if="${categoria.tipo == null}">Selecciona un tipo</option>
-          <option value="Ingreso">Ingreso</option>
-          <option value="Egreso">Egreso</option>
-        </select>
+                <label for="tipo">Tipo</label>
+                <select class="selc" id="tipo" required th:field="*{tipo}">
+                    <option value="" disabled th:if="${categoria.tipo == null}">Selecciona un tipo</option>
+                    <option value="Ingreso">Ingreso</option>
+                    <option value="Egreso">Egreso</option>
+                </select>
 
-        <button type="submit" th:text="${categoria.id != null} ? 'Actualizar' : 'Crear'">Crear</button>
-      </form>
+                <button type="submit" th:text="${categoria.id != null} ? 'Actualizar' : 'Crear'">Crear</button>
+            </form>
+
+        </div>
+
+        <!-- Tabla a la derecha -->
+        <div class="card table-card">
+            <h3>Categorías Registradas</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cat : ${categorias}">
+                        <td th:text="${cat.nombre}"></td>
+                        <td th:text="${cat.tipo}"></td>
+                        <td>
+                            <a th:href="@{'/categorias?edit=' + ${cat.id}}" class="btn edit">Editar</a>
+                            <a th:href="@{'/categorias/eliminar/' + ${cat.id}}" class="btn delete"
+                               onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">Eliminar</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <!-- Tabla a la derecha -->
-    <div class="card table-card">
-      <h3>Categorías Registradas</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Acciones</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="cat : ${categorias}">
-            <td th:text="${cat.nombre}"></td>
-            <td th:text="${cat.tipo}"></td>
-            <td>
-              <a th:href="@{'/categorias?edit=' + ${cat.id}}" class="btn edit">Editar</a>
-              <a th:href="@{'/categorias/eliminar/' + ${cat.id}}" class="btn delete"
-                 onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">Eliminar</a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </section>
 
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96c4a0b7c06b92fb',t:'MTc1NDcxNDk3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
