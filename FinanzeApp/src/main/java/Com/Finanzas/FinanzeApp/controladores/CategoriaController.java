@@ -11,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @Controller
 @RequestMapping("/categorias")
@@ -103,5 +106,21 @@ public class CategoriaController {
         }
 
         return "redirect:/categorias";
+    }
+
+    @GetMapping("/api/{id}/tipo")
+    @ResponseBody
+    public ResponseEntity<String> obtenerTipoCategoria(@PathVariable Long id) {
+        Usuario usuario = getUsuarioAutenticado();
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Optional<Categoria> categoria = categoriaRepository.findById(id);
+        if (categoria.isPresent() && categoria.get().getUsuario().getId().equals(usuario.getId())) {
+            return ResponseEntity.ok(categoria.get().getTipo());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
