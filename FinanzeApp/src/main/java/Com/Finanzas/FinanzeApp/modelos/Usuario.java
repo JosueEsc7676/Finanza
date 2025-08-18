@@ -36,4 +36,14 @@ public class Usuario {
 
     @Column(name = "moneda", length = 10)
     private String moneda; // Ej: USD, EUR, MXN
+
+    // 🔹 Nuevo: identificar proveedor OAuth2 (ej: GOOGLE, FACEBOOK, etc.)
+    @Column(name = "proveedor")
+    private String proveedor;
+    @Column(name = "foto_url")
+    private String fotoUrl; // si viene de Google, guardamos aquí la URL
+
+    // 🔹 Nuevo: id del proveedor (sub de Google u otro)
+    @Column(name = "proveedor_id")
+    private String proveedorId;
 }

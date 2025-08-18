@@ -2,166 +2,745 @@
 <html lang="es" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Restablecer Contraseña</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña - FinanzeApp</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #ffffff;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
-            box-sizing: border-box;
+            color: #1a1a1a;
         }
-        form {
-            background: #ffffff;
-            padding: 3rem;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
-            width: 420px;
-            max-width: 90vw;
-            border: 1px solid #e8f4fd;
+
+        .reset-container {
+            background: white;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8e8;
+            overflow: hidden;
+            max-width: 520px;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-section {
+            background: #1a1a1a;
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
             position: relative;
             overflow: hidden;
         }
-        form::before {
+
+        .header-section::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #1976d2, #42a5f5, #64b5f6);
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.02) 100%);
+            pointer-events: none;
         }
-        h2 {
-            text-align: center;
-            margin-bottom: 2.5rem;
-            color: #1a1a1a;
-            font-size: 1.75rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 0.2s forwards;
         }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #374151;
-            font-weight: 600;
+
+        .logo-icon {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .reset-container h2 {
+            font-size: 2rem;
+            font-weight: 200;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 0.4s forwards;
+        }
+
+        .subtitle {
             font-size: 0.95rem;
+            opacity: 0.8;
+            font-weight: 300;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 0.6s forwards;
         }
-        input[type=password] {
-            width: 100%;
-            padding: 1rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1.5rem;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 1rem;
+
+        form {
+            padding: 50px 40px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(20px);
+            animation: slideInRight 0.6s ease 0.8s forwards;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.3s ease;
-            background: #fafbfc;
-            box-sizing: border-box;
-            color: #374151;
         }
-        input[type=password]:focus {
-            outline: none;
-            border-color: #1976d2;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.08);
-            transform: translateY(-1px);
+
+        .label-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
         }
-        button {
+
+        .password-input-container {
+            position: relative;
+        }
+
+        .form-group input {
             width: 100%;
-            padding: 1rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1.5rem;
+            padding: 18px 50px 18px 0;
             border: none;
-            border-radius: 10px;
-            background: #1976d2;
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+            font-weight: 300;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-bottom-color: #1a1a1a;
+            transform: translateY(-2px);
+        }
+
+        .form-group input:focus + .input-line {
+            transform: scaleX(1);
+        }
+
+        .form-group input::placeholder {
+            color: #bbb;
+            font-weight: 300;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-group input:focus::placeholder {
+            opacity: 0.5;
+        }
+
+        .input-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #1a1a1a;
+            transform: scaleX(0);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
             cursor: pointer;
+            padding: 8px;
+            color: #666;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
-            box-sizing: border-box;
         }
-        button:hover {
-            background: #1565c0;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+
+        .password-toggle:hover {
+            color: #1a1a1a;
+            transform: translateY(-50%) scale(1.1);
         }
-        button:active {
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .strength-indicator {
+            margin-top: 16px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .strength-indicator.show {
+            opacity: 1;
             transform: translateY(0);
-            box-shadow: 0 1px 4px rgba(25, 118, 210, 0.2);
         }
+
+        .strength-bar {
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 2px;
+        }
+
+        .strength-fill.weak {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            width: 25%;
+        }
+
+        .strength-fill.fair {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            width: 50%;
+        }
+
+        .strength-fill.good {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            width: 75%;
+        }
+
+        .strength-fill.strong {
+            background: linear-gradient(90deg, #10b981, #34d399);
+            width: 100%;
+        }
+
+        .strength-text {
+            font-size: 0.8rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .requirements {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .requirement.met {
+            color: #10b981;
+        }
+
+        .requirement-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+        }
+
+        .requirement.met .requirement-icon {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            margin: 32px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 1s forwards;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(26, 26, 26, 0.3);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .mensaje, .error {
+            margin-top: 24px;
+            padding: 16px 20px;
+            font-size: 0.9rem;
+            font-weight: 300;
+            border-radius: 2px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
         .mensaje {
-            color: #065f46;
-            text-align: center;
-            background: #ecfdf5;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #a7f3d0;
-            font-weight: 500;
-            margin-top: 1rem;
+            background: #f0f9ff;
+            color: #0369a1;
+            border-left: 2px solid #0369a1;
         }
+
         .error {
-            color: #991b1b;
-            text-align: center;
             background: #fef2f2;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid #fecaca;
+            color: #dc2626;
+            border-left: 2px solid #dc2626;
+        }
+
+        .security-info {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            border-top: 1px solid #f0f0f0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease 1.2s forwards;
+        }
+
+        .security-title {
+            font-size: 0.85rem;
             font-weight: 500;
-            margin-top: 1rem;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* Responsive Design */
+        .security-text {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .reset-container {
+                margin: 10px;
+                max-width: none;
+            }
+
+            .header-section {
+                padding: 40px 30px;
+            }
+
+            .reset-container h2 {
+                font-size: 1.8rem;
+            }
+
+            form {
+                padding: 40px 30px;
+            }
+
+            .security-info {
+                padding: 25px 30px;
+            }
+        }
+
         @media (max-width: 480px) {
-            body {
-                padding: 15px;
+            .header-section {
+                padding: 30px 25px;
             }
-            form {
-                padding: 2rem 1.5rem;
-                width: 100%;
-                max-width: 100%;
-            }
-            h2 {
-                font-size: 1.5rem;
-                margin-bottom: 2rem;
-            }
-            input[type=password], button {
-                padding: 0.9rem;
-                font-size: 0.95rem;
-            }
-        }
 
-        @media (max-width: 360px) {
+            .reset-container h2 {
+                font-size: 1.6rem;
+            }
+
             form {
-                padding: 1.5rem 1rem;
+                padding: 30px 25px;
             }
-            h2 {
-                font-size: 1.3rem;
-            }
-            input[type=password], button {
-                padding: 0.8rem;
+
+            .security-info {
+                padding: 20px 25px;
             }
         }
     </style>
 </head>
 <body>
-<form action="/Recuperar/reset" method="post">
-    <h2>Restablecer Contraseña</h2>
+<div class="reset-container">
+    <div class="header-section">
+        <div class="logo">
+            <div class="logo-icon"></div>
+            FinanzApp
+        </div>
+        <h2>Restablecer Contraseña</h2>
+        <p class="subtitle">Crea una nueva contraseña segura para tu cuenta</p>
+    </div>
 
-    <input type="hidden" name="token" th:value="${token}">
+    <form action="/Recuperar/reset" method="post">
+        <input type="hidden" name="token" th:value="${token}">
 
-    <label for="nuevaContrasena">Nueva Contraseña:</label>
-    <input type="password" name="nuevaContrasena" id="nuevaContrasena" required>
+        <div class="form-group">
+            <label for="nuevaContrasena">
+                <svg class="label-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                </svg>
+                Nueva Contraseña
+            </label>
+            <div class="password-input-container">
+                <input type="password" name="nuevaContrasena" id="nuevaContrasena" placeholder="Ingresa tu nueva contraseña" required>
+                <button type="button" class="password-toggle" id="togglePassword">
+                    <svg id="eyeIcon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="input-line"></div>
 
-    <button type="submit">Actualizar Contraseña</button>
+            <div class="strength-indicator" id="strengthIndicator">
+                <div class="strength-bar">
+                    <div class="strength-fill" id="strengthFill"></div>
+                </div>
+                <div class="strength-text" id="strengthText">Ingresa una contraseña</div>
+                <div class="requirements">
+                    <div class="requirement" id="lengthReq">
+                        <div class="requirement-icon"></div>
+                        Al menos 8 caracteres
+                    </div>
+                    <div class="requirement" id="upperReq">
+                        <div class="requirement-icon"></div>
+                        Una letra mayúscula
+                    </div>
+                    <div class="requirement" id="lowerReq">
+                        <div class="requirement-icon"></div>
+                        Una letra minúscula
+                    </div>
+                    <div class="requirement" id="numberReq">
+                        <div class="requirement-icon"></div>
+                        Un número
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="mensaje" th:if="${mensaje}" th:text="${mensaje}"></div>
-    <div class="error" th:if="${error}" th:text="${error}"></div>
-</form>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96a24844205574ba',t:'MTc1NDM1NDgzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+        <button type="submit" class="submit-btn" id="submitBtn">Actualizar Contraseña</button>
+
+        <div class="mensaje" th:if="${mensaje}" th:text="${mensaje}"></div>
+        <div class="error" th:if="${error}" th:text="${error}"></div>
+    </form>
+
+    <div class="security-info">
+        <div class="security-title">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Seguridad
+        </div>
+        <p class="security-text">Tu nueva contraseña será encriptada y almacenada de forma segura. Asegúrate de usar una combinación única que no hayas utilizado en otros sitios.</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('nuevaContrasena');
+        const toggleButton = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const strengthIndicator = document.getElementById('strengthIndicator');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        const submitBtn = document.getElementById('submitBtn');
+        const inputLine = passwordInput.nextElementSibling.nextElementSibling;
+        const label = passwordInput.parentElement.previousElementSibling;
+        const icon = label.querySelector('.label-icon');
+
+        // Requirements elements
+        const lengthReq = document.getElementById('lengthReq');
+        const upperReq = document.getElementById('upperReq');
+        const lowerReq = document.getElementById('lowerReq');
+        const numberReq = document.getElementById('numberReq');
+
+        // Enhanced input interactions
+        passwordInput.addEventListener('focus', function() {
+            this.parentElement.parentElement.style.transform = 'translateX(2px)';
+            label.style.color = '#1a1a1a';
+            label.style.transform = 'translateY(-2px)';
+
+            if (icon) {
+                icon.style.opacity = '1';
+            }
+
+            if (inputLine && inputLine.classList.contains('input-line')) {
+                inputLine.style.transform = 'scaleX(1)';
+            }
+        });
+
+        passwordInput.addEventListener('blur', function() {
+            this.parentElement.parentElement.style.transform = 'translateX(0)';
+            label.style.color = '#1a1a1a';
+            label.style.transform = 'translateY(0)';
+
+            if (icon) {
+                icon.style.opacity = '0.6';
+            }
+
+            if (inputLine && inputLine.classList.contains('input-line')) {
+                inputLine.style.transform = 'scaleX(0)';
+            }
+        });
+
+        // Password visibility toggle
+        toggleButton.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            eyeIcon.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                if (type === 'text') {
+                    eyeIcon.innerHTML = `
+                        <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z"/>
+                        <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                    `;
+                } else {
+                    eyeIcon.innerHTML = `
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                    `;
+                }
+                eyeIcon.style.transform = 'scale(1)';
+            }, 150);
+        });
+
+        // Password strength checker
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+
+            if (password.length > 0) {
+                strengthIndicator.classList.add('show');
+            } else {
+                strengthIndicator.classList.remove('show');
+                return;
+            }
+
+            // Check requirements
+            const hasLength = password.length >= 8;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasNumber = /\d/.test(password);
+
+            // Update requirement indicators
+            updateRequirement(lengthReq, hasLength);
+            updateRequirement(upperReq, hasUpper);
+            updateRequirement(lowerReq, hasLower);
+            updateRequirement(numberReq, hasNumber);
+
+            // Calculate strength
+            const score = [hasLength, hasUpper, hasLower, hasNumber].filter(Boolean).length;
+
+            // Update strength indicator
+            strengthFill.className = 'strength-fill';
+
+            switch(score) {
+                case 1:
+                    strengthFill.classList.add('weak');
+                    strengthText.textContent = 'Contraseña débil';
+                    strengthText.style.color = '#ef4444';
+                    submitBtn.disabled = true;
+                    break;
+                case 2:
+                    strengthFill.classList.add('fair');
+                    strengthText.textContent = 'Contraseña regular';
+                    strengthText.style.color = '#f59e0b';
+                    submitBtn.disabled = true;
+                    break;
+                case 3:
+                    strengthFill.classList.add('good');
+                    strengthText.textContent = 'Contraseña buena';
+                    strengthText.style.color = '#3b82f6';
+                    submitBtn.disabled = false;
+                    break;
+                case 4:
+                    strengthFill.classList.add('strong');
+                    strengthText.textContent = 'Contraseña fuerte';
+                    strengthText.style.color = '#10b981';
+                    submitBtn.disabled = false;
+                    break;
+                default:
+                    strengthText.textContent = 'Ingresa una contraseña';
+                    strengthText.style.color = '#666';
+                    submitBtn.disabled = true;
+            }
+
+            // Typing animation
+            this.style.transform = 'translateY(-1px)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-2px)';
+            }, 100);
+        });
+
+        function updateRequirement(element, met) {
+            const icon = element.querySelector('.requirement-icon');
+            if (met) {
+                element.classList.add('met');
+                icon.innerHTML = '✓';
+            } else {
+                element.classList.remove('met');
+                icon.innerHTML = '';
+            }
+        }
+
+        // Button click animation
+        submitBtn.addEventListener('click', function(e) {
+            if (this.disabled) {
+                e.preventDefault();
+                this.style.animation = 'shake 0.5s ease';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 500);
+                return;
+            }
+
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s ease-out;
+                pointer-events: none;
+            `;
+
+            this.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+
+        // Smooth scroll to messages
+        const messageElement = document.querySelector('.mensaje, .error');
+        if (messageElement) {
+            setTimeout(() => {
+                messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+        }
+    });
+
+    // Add additional animations CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'970c4dad154278f8',t:'MTc1NTQ2NjU0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

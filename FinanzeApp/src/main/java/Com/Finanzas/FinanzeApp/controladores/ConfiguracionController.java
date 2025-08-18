@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Base64;
 
 @Controller
@@ -29,10 +30,14 @@ public class ConfiguracionController {
     }
 
     @GetMapping
-    public String mostrarConfiguracion(Model model) {
+    public String mostrarConfiguracion(Model model, Principal principal) {
         Usuario usuario = getAuthenticatedUser();
         model.addAttribute("usuario", usuario);
 
+        // Foto de Google
+        model.addAttribute("fotoGoogle", usuario.getFotoUrl());
+
+        // Foto local en base64
         if (usuario.getFotoPerfil() != null) {
             String fotoBase64 = Base64.getEncoder().encodeToString(usuario.getFotoPerfil());
             model.addAttribute("fotoBase64", fotoBase64);
@@ -42,6 +47,7 @@ public class ConfiguracionController {
 
         return "configuracion";
     }
+
 
     @PostMapping("/guardar")
     public String guardarConfiguracion(
@@ -69,9 +75,11 @@ public class ConfiguracionController {
 
         if (fotoPerfil != null && !fotoPerfil.isEmpty()) {
             usuario.setFotoPerfil(fotoPerfil.getBytes());
+            usuario.setFotoUrl(null); // 👈 si sube local, anulamos Google
         }
 
         usuarioRepositorio.save(usuario);
         return "redirect:/configuracion?success";
     }
+
 }

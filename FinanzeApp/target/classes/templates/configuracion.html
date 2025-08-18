@@ -154,6 +154,9 @@
         .profile-header {
             position: relative;
             animation: slideInRight 1s ease-out 0.5s both;
+            width: 60px;
+                left: -40px;
+
         }
 
         .profile-preview {
@@ -581,9 +584,19 @@
                 </div>
                 <div class="profile-header">
                     <div class="profile-preview">
-                        <img th:if="${fotoBase64 != null}" th:src="'data:image/jpeg;base64,' + ${fotoBase64}" alt="Foto de perfil"/>
-                        <img th:if="${fotoBase64 == null}" src="/images/default-avatar.png" alt="Sin foto"/>
+                        <!-- Si es Google, mostrar URL -->
+                        <img th:if="${fotoGoogle != null}" th:src="${fotoGoogle}" alt="Foto de Google"/>
+
+                        <!-- Si es local, mostrar base64 -->
+                        <img th:if="${fotoGoogle == null and fotoBase64 != null}"
+                             th:src="'data:image/jpeg;base64,' + ${fotoBase64}"
+                             alt="Foto de perfil"/>
+
+                        <!-- Si no tiene nada, usar avatar por defecto -->
+                        <img th:if="${fotoGoogle == null and fotoBase64 == null}"
+                             src="/images/default-avatar.png" alt="Sin foto"/>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -639,17 +652,14 @@
                     </select>
                 </div>
 
-                <div class="file-upload-card">
+                <div class="file-upload-card" th:if="${fotoGoogle == null}">
                     <label>Actualizar Foto de Perfil</label>
                     <div class="file-upload-wrapper">
                         <div class="file-upload-area" id="fileUploadArea">
-                            <svg class="upload-icon" ...></svg>
+                            <svg class="upload-icon"></svg>
                             <div class="upload-text">Arrastra tu foto aquí o haz clic para seleccionar</div>
                             <div class="upload-subtext">PNG, JPG, GIF hasta 10MB</div>
-
-                            <!-- Vista previa -->
                             <img id="previewImage" class="preview-image" style="display:none;" alt="Vista previa">
-
                             <input type="file" name="fotoPerfil" id="fileInput" accept="image/*">
                         </div>
                     </div>

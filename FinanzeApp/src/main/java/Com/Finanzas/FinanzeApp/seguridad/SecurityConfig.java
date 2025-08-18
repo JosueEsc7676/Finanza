@@ -1,5 +1,8 @@
 package Com.Finanzas.FinanzeApp.seguridad;
-
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import Com.Finanzas.FinanzeApp.servicios.interfaces.CustomOAuth2UserService;
 import Com.Finanzas.FinanzeApp.servicios.interfaces.UsuarioDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,17 +16,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.sql.DataSource;
+
+
 @Configuration
 public class SecurityConfig {
 
     @Autowired
-    private UsuarioDetailService userDetailsService;
-
+    private UsuarioDetailService usuarioDetailService;
+    @Autowired
+    private CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
     @Autowired
     private JwtFilter jwtFilter;
+    @Autowired
+    private DataSource dataSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        UsuarioDetailService UsuarioDetailService;
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -45,6 +57,19 @@ public class SecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
+                .rememberMe(remember -> remember
+                        .tokenRepository(persistentTokenRepository())
+                        .tokenValiditySeconds(60 * 60 * 24 * 30) // 30 días
+                        .userDetailsService(usuarioDetailService) // tu servicio de usuarios
+                )
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .defaultSuccessUrl("/inicio", true) // 🔹 redirige tras login
+                )
+
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
@@ -64,6 +89,12 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+        repo.setDataSource(this.dataSource); // ✅ usa el dataSource inyectado
+        return repo;
     }
 
     @Bean
