@@ -39,8 +39,8 @@ public class RecuperacionController {
             usuarioRepositorio.save(usuario);
 
 //            String link = "http://192.168.10.140:8080/Recuperar/reset?token=" + token;
-            String link = "https://4afa4c2ec309.ngrok-free.app/Recuperar/reset?token=" + token;
-
+//            String link = "https://b644a2cfc04b.ngrok-free.app/Recuperar/reset?token=" + token;
+              String link = "https://finanzeapp.pagekite.me/Recuperar/reset?token=" + token;
 
             try {
                 emailService.enviarCorreoRecuperacion(correo, link);

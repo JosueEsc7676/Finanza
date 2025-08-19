@@ -1,8 +1,12 @@
 package Com.Finanzas.FinanzeApp.modelos;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.List;
 
 @Entity
+@Data
 public class Usuario {
 
     @Id
@@ -22,40 +26,32 @@ public class Usuario {
     @Column(name = "token_recuperacion")
     private String tokenRecuperacion;
 
-    // --- Getters y Setters ---
+    @Column(name = "tema")
+    private String tema; // valores posibles: "light", "dark"
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Column(name = "modo_oscuro")
+    private Boolean modoOscuro = false;
 
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
+    @Lob
+    @Column(name = "foto_perfil", columnDefinition = "LONGBLOB")
+    private byte[] fotoPerfil; // Guardar imagen como BLOB
 
-    public String getContrasena() { return contrasena; }
-    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+    @Column(name = "moneda", length = 10)
+    private String moneda; // Ej: USD, EUR, MXN
 
-    public String getNombreCompleto() { return nombreCompleto; }
-    public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
+    // 🔹 Nuevo: identificar proveedor OAuth2 (ej: GOOGLE, FACEBOOK, etc.)
+    @Column(name = "proveedor")
+    private String proveedor;
+    @Column(name = "foto_url")
+    private String fotoUrl; // si viene de Google, guardamos aquí la URL
 
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+    // 🔹 Nuevo: id del proveedor (sub de Google u otro)
+    @Column(name = "proveedor_id")
+    private String proveedorId;
+    // Aquí pones la relación con Movimiento:
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Movimiento> movimientos;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
 
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
-
-    public String getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(String fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
-
-    public String getOcupacion() { return ocupacion; }
-    public void setOcupacion(String ocupacion) { this.ocupacion = ocupacion; }
-
-    public String getGenero() { return genero; }
-    public void setGenero(String genero) { this.genero = genero; }
-
-    public String getTokenRecuperacion() {
-        return tokenRecuperacion;
-    }
-
-    public void setTokenRecuperacion(String tokenRecuperacion) {
-        this.tokenRecuperacion = tokenRecuperacion;
-    }
+    private List<Categoria> categorias;
 }

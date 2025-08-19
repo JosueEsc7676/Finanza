@@ -49,7 +49,6 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
                              @Param("fin") LocalDate fin,
                              Pageable pageable);
 
-    // ✅ CORREGIDO: usamos DATE_FORMAT para evitar conflicto con ONLY_FULL_GROUP_BY
     @Query(value = """
         SELECT DATE_FORMAT(m.fecha, '%Y-%m') AS periodo, SUM(m.monto)
         FROM movimientos m

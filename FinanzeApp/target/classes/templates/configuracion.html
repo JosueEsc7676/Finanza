@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración - FinanzApp</title>
+    <style>
+        /* Agregando estilos personalizados para configuración usando variables CSS del layout */
+        .config-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .config-header {
+            margin-bottom: 2rem;
+        }
+
+        .config-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .config-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .config-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .config-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .config-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .config-card-icon {
+            font-size: 1.5rem;
+        }
+
+        .config-card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .config-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .config-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .config-btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .config-btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            color: white;
+        }
+
+        .config-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .config-btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .config-btn-secondary:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .config-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .config-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .config-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .config-container {
+                padding: 1rem;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .config-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="config-container">
+        <!-- Header usando estilos personalizados -->
+        <div class="config-header">
+            <h1 class="config-title">
+                <i class="fas fa-cog"></i> Configuración
+            </h1>
+            <p class="config-subtitle">Personaliza tu experiencia en FinanzApp</p>
+        </div>
+
+        <!-- Grid de configuraciones usando CSS Grid personalizado -->
+        <div class="config-grid">
+            <!-- Moneda Principal -->
+            <div class="config-card">
+                <div class="config-card-header">
+                    <span class="config-card-icon">💰</span>
+                    <h3 class="config-card-title">Moneda Principal</h3>
+                </div>
+                <select id="moneda" class="config-select">
+                    <option value="USD" th:selected="${usuario?.moneda == 'USD'}">🇺🇸 Dólar (USD)</option>
+                    <option value="EUR" th:selected="${usuario?.moneda == 'EUR'}">🇪🇺 Euro (EUR)</option>
+                    <option value="MXN" th:selected="${usuario?.moneda == 'MXN'}">🇲🇽 Peso Mexicano (MXN)</option>
+                    <option value="COP" th:selected="${usuario?.moneda == 'COP'}">🇨🇴 Peso Colombiano (COP)</option>
+                    <option value="ARS" th:selected="${usuario?.moneda == 'ARS'}">🇦🇷 Peso Argentino (ARS)</option>
+                </select>
+            </div>
+
+            <!-- Tema -->
+            <div class="config-card">
+                <div class="config-card-header">
+                    <span class="config-card-icon">🎨</span>
+                    <h3 class="config-card-title">Tema</h3>
+                </div>
+                <select id="tema" class="config-select">
+                    <option value="light" th:selected="${usuario?.tema == 'light'}">☀️ Claro</option>
+                    <option value="dark" th:selected="${usuario?.tema == 'dark'}">🌙 Oscuro</option>
+                    <option value="auto" th:selected="${usuario?.tema == 'auto'}">🔄 Automático</option>
+                </select>
+            </div>
+
+            <!-- Formato de Fecha -->
+            <div class="config-card">
+                <div class="config-card-header">
+                    <span class="config-card-icon">📅</span>
+                    <h3 class="config-card-title">Formato de Fecha</h3>
+                </div>
+                <select id="formatoFecha" class="config-select">
+                    <option value="dd/MM/yyyy" th:selected="${usuario?.formatoFecha == 'dd/MM/yyyy'}">DD/MM/AAAA</option>
+                    <option value="MM/dd/yyyy" th:selected="${usuario?.formatoFecha == 'MM/dd/yyyy'}">MM/DD/AAAA</option>
+                    <option value="yyyy-MM-dd" th:selected="${usuario?.formatoFecha == 'yyyy-MM-dd'}">AAAA-MM-DD</option>
+                </select>
+            </div>
+
+            <!-- Idioma -->
+            <div class="config-card">
+                <div class="config-card-header">
+                    <span class="config-card-icon">🌍</span>
+                    <h3 class="config-card-title">Idioma</h3>
+                </div>
+                <select id="idioma" class="config-select">
+                    <option value="es" th:selected="${usuario?.idioma == 'es'}">🇪🇸 Español</option>
+                    <option value="en" th:selected="${usuario?.idioma == 'en'}">🇺🇸 English</option>
+                    <option value="pt" th:selected="${usuario?.idioma == 'pt'}">🇧🇷 Português</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Botones de acción usando estilos personalizados -->
+        <div class="config-actions">
+            <button id="guardarConfiguracion" class="config-btn config-btn-primary">
+                <i class="fas fa-save"></i> Guardar Configuración
+            </button>
+            <button id="resetearConfiguracion" class="config-btn config-btn-secondary">
+                <i class="fas fa-undo"></i> Restablecer
+            </button>
+        </div>
+
+        <!-- Mensaje de Estado -->
+        <div id="mensaje" class="config-message"></div>
+    </div>
+</section>
+
+<!-- JavaScript simplificado para manejar solo las 4 configuraciones -->
+<script>
+    document.getElementById("guardarConfiguracion").addEventListener("click", function() {
+        const configuracion = {
+            moneda: document.getElementById("moneda").value,
+            tema: document.getElementById("tema").value,
+            formatoFecha: document.getElementById("formatoFecha").value,
+            idioma: document.getElementById("idioma").value
+        };
+
+        fetch("/usuario/configuracion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(configuracion)
+        })
+        .then(response => {
+            const mensaje = document.getElementById("mensaje");
+            mensaje.style.display = "block";
+
+            if (response.ok) {
+                mensaje.className = "config-message success";
+                mensaje.innerHTML = "<i class='fas fa-check-circle'></i> Configuración guardada correctamente";
+                setTimeout(() => {
+                    mensaje.style.display = "none";
+                }, 3000);
+            } else {
+                mensaje.className = "config-message error";
+                mensaje.innerHTML = "<i class='fas fa-exclamation-circle'></i> Error al guardar la configuración";
+            }
+        })
+        .catch(error => {
+            const mensaje = document.getElementById("mensaje");
+            mensaje.style.display = "block";
+            mensaje.className = "config-message error";
+            mensaje.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Error de conexión";
+        });
+    });
+
+    document.getElementById("resetearConfiguracion").addEventListener("click", function() {
+        if (confirm("¿Estás seguro de que quieres restablecer la configuración por defecto?")) {
+            document.getElementById("moneda").value = "USD";
+            document.getElementById("tema").value = "auto";
+            document.getElementById("formatoFecha").value = "dd/MM/yyyy";
+            document.getElementById("idioma").value = "es";
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Análisis de Gastos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Añadiendo estilos completos y consistentes para la página de análisis */
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .container h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+    }
+
+    .container h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 2px;
+    }
+
+    .muted {
+        text-align: center;
+        color: var(--text-secondary);
+        font-style: italic;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .toolbar {
+        background: var(--bg-primary);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .toolbar form {
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .toolbar label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .toolbar input {
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        border: 2px solid var(--border-color);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        min-width: 150px;
+    }
+
+    .toolbar input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn.btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: white;
+    }
+
+    .btn.ghost {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 2px solid var(--border-color);
+    }
+
+    .btn.ghost:hover {
+        background: var(--bg-secondary);
+        border-color: var(--primary-color);
+    }
+
+    .btn.secondary {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+    .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .card {
+        background: var(--bg-primary);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .card.kpi {
+        text-align: center;
+    }
+
+    .card.kpi h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .card.kpi .value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .card h3 {
+        margin: 0 0 1.5rem 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card h3::before {
+        content: '📊';
+        font-size: 1.2rem;
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+        justify-content: center;
+    }
+
+    .legend span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .cards-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--bg-primary);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .table th {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background: var(--bg-secondary);
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .badge.green {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge.red {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+
+        .container h1 {
+            font-size: 2rem;
+        }
+
+        .toolbar form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .toolbar input {
+            min-width: auto;
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cards-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .kpis {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .card {
+            padding: 1.5rem;
+        }
+
+        .card.kpi .value {
+            font-size: 2rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Animaciones */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .card:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .card:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+
+    .card:nth-child(4) {
+        animation-delay: 0.3s;
+    }
+  </style>
+</head>
+<body>
+<section layout:fragment="content">
+  <div class="container">
+    <h1>Análisis de Gastos</h1>
+    <p class="muted" th:text="${sugerencia}">Sugerencia</p>
+
+    <div class="toolbar">
+      <form method="get" th:action="@{/analisis}">
+        <label>Desde:
+          <input type="date"
+                 name="desde"
+                 th:value="${#temporals.format(desde, 'yyyy-MM-dd')}"
+                 required>
+        </label>
+        <label>Hasta:
+          <input type="date"
+                 name="hasta"
+                 th:value="${#temporals.format(hasta, 'yyyy-MM-dd')}"
+                 required>
+        </label>
+        <button class="btn btn-primary" type="submit">Filtrar</button>
+        <a class="btn ghost" th:href="@{/analisis}">Mes actual</a>
+        <a class="btn secondary"
+           th:href="@{/analisis/export/csv(desde=${desde}, hasta=${hasta})}">Exportar CSV</a>
+      </form>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="card kpi">
+        <h3>Total de gastos</h3>
+        <div class="value"
+             th:text="${#numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">
+          0.00
+        </div>
+      </div>
+      <div class="card kpi">
+        <h3>Categoría más costosa</h3>
+        <div class="value" th:text="${kpis.categoriaMasCostosa}">-</div>
+      </div>
+      <div class="card kpi">
+        <h3>Variación vs mes anterior</h3>
+        <div class="value">
+                <span th:text="${
+                     (kpis.variacionMesAnterior != null
+                        ? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT')
+                        : '0.0')
+                     + '%'}">
+                    0.0%
+                </span>
+        </div>
+      </div>
+      <div class="card kpi">
+        <h3>Promedio diario</h3>
+        <div class="value"
+             th:text="${#numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">
+          0.00
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="grid">
+      <div class="card">
+        <h3>Gastos por categoría</h3>
+        <canvas id="chartCategorias" height="220"></canvas>
+        <div class="legend" id="legendCategorias"></div>
+      </div>
+      <div class="card">
+        <h3>Tendencia (últimos meses)</h3>
+        <canvas id="chartTendencia" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="cards-2">
+      <div class="card">
+        <h3>Top 5 gastos</h3>
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Categoría</th>
+            <th>Fecha</th>
+            <th>Monto</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="t : ${top5}">
+            <td th:text="${t.descripcion}">-</td>
+            <td th:text="${t.categoria}">-</td>
+            <td th:text="${t.fecha}">-</td>
+            <td th:text="${#numbers.formatDecimal(t.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">
+              0.00
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Presupuestos por categoría</h3>
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Categoría</th>
+            <th>Gastado</th>
+            <th>Presupuesto</th>
+            <th>Restante</th>
+            <th>Estado</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="p : ${presupuestos}">
+            <td th:text="${p.categoria}">-</td>
+            <td th:text="${#numbers.formatDecimal(p.gasto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+            <td th:text="${#numbers.formatDecimal(p.presupuesto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+            <td th:text="${#numbers.formatDecimal(p.restante ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+            <td>
+                        <span th:classappend="${p.excedido} ? 'badge red' : 'badge green'"
+                              th:text="${p.excedido} ? 'Excedido' : 'OK'">OK</span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tabla detalle por categoría -->
+    <div class="card">
+      <h3>Detalle por categoría</h3>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Monto</th>
+          <th>%</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${analisis}">
+          <td th:text="${item.categoria}">Categoría</td>
+          <td th:text="${#numbers.formatDecimal(item.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+          <td th:text="${(item.porcentaje != null
+                                ? #numbers.formatDecimal(item.porcentaje, 0, 'COMMA', 1, 'POINT')
+                                : '0.0') + '%'}">0.0%</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script th:inline="javascript">
+    const categorias = /*[[${categorias}]]*/ [];
+    const totales = /*[[${totales}]]*/ [];
+    const meses = /*[[${meses}]]*/ [];
+    const totalesMensuales = /*[[${totalesMensuales}]]*/ [];
+
+    // Paleta de colores
+    const palette = ['#FF6384','#36A2EB','#FFCE56','#66BB6A','#9575CD','#FFA726','#8D6E63','#26C6DA','#EC407A','#AB47BC'];
+
+    // Pie: gastos por categoría
+    const ctxCat = document.getElementById('chartCategorias');
+    const chartCategorias = new Chart(ctxCat, {
+        type: 'pie',
+        data: {
+            labels: categorias,
+            datasets: [{ data: totales, backgroundColor: categorias.map((_, i) => palette[i % palette.length]) }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed;
+                            const total = totales.reduce((a,b)=>a+b,0);
+                            const pct = total > 0 ? (value/total*100) : 0;
+                            return `${context.label}: ${value.toFixed(2)} USD (${pct.toFixed(1)}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Leyenda custom
+    const legend = document.getElementById('legendCategorias');
+    categorias.forEach((c, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        dot.style.background = palette[i % palette.length];
+        const label = document.createElement('span');
+        label.textContent = ` ${c}`;
+        const wrap = document.createElement('span');
+        wrap.style.marginRight='10px';
+        wrap.append(dot,label);
+        legend.appendChild(wrap);
+    });
+
+    // Línea: tendencia mensual
+    const ctxTrend = document.getElementById('chartTendencia');
+    new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+            labels: meses,
+            datasets: [{
+                label: 'Gastos',
+                data: totalesMensuales,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+  </script>
+</section>
+</body>
+</html>

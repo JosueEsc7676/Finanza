@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración de Cuenta</title>
+    <style>
+        :root {
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --header-gradient: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            --scrollbar-thumb: rgba(148, 163, 184, 0.5);
+            --scrollbar-thumb-hover: rgba(148, 163, 184, 0.7);
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --shadow: 0 1px 3px rgb(0 0 0 / 10%);
+            --shadow-lg: 0 4px 12px rgb(0 0 0 / 8%);
+        }
+
+        [data-theme="dark"] {
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --header-gradient: linear-gradient(135deg, #0f172a, #1e293b);
+            --scrollbar-thumb: rgba(71, 85, 105, 0.5);
+            --scrollbar-thumb-hover: rgba(71, 85, 105, 0.7);
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        body.dark-mode {
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --header-gradient: linear-gradient(135deg, #0f172a, #1e293b);
+            --scrollbar-thumb: rgba(71, 85, 105, 0.5);
+            --scrollbar-thumb-hover: rgba(71, 85, 105, 0.7);
+            --bg-primary: #020617;
+            --bg-secondary: #0f172a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Partículas de fondo */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-particle 20s infinite linear;
+        }
+
+        .config-container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
+            margin-top: -55px;
+
+        }
+
+        /* Header flotante */
+        .header-section {
+            background: var(--header-gradient);
+            padding: 40px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+
+        }
+            .xd{
+            }
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-section {
+            flex: 1;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 2.8rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            animation: slideInLeft 1s ease-out 0.3s both;
+        }
+
+        .profile-header {
+            position: relative;
+            animation: slideInRight 1s ease-out 0.5s both;
+            width: 60px;
+                left: -40px;
+
+        }
+
+        .profile-preview {
+            position: relative;
+        }
+
+        .profile-preview img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.5s ease;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        .profile-preview img:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+ /* Sección del formulario */
+        .form-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 50px 40px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out both;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .form-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: block;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            position: relative;
+            font-family: inherit;
+            box-shadow: var(--shadow);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1), 0 8px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            background: var(--bg-primary);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-color);
+            background: var(--bg-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.1);
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--success-color);
+            background: var(--bg-primary);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover .upload-icon {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-selected {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .file-selected.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 16px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 50px;
+        }
+
+        .file-upload-card {
+            grid-column: 1 / -1;
+            text-align: center;
+        }
+
+        .submit-card {
+            grid-column: 1 / -1;
+            text-align: center;
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            backdrop-filter: none;
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button[type="submit"]:hover::before {
+            left: 100%;
+        }
+
+        /* Animaciones */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: var(--shadow-lg), 0 0 0 0 rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Efectos de entrada escalonados */
+        .form-card:nth-child(1) { animation-delay: 0.1s; }
+        .form-card:nth-child(2) { animation-delay: 0.2s; }
+        .form-card:nth-child(3) { animation-delay: 0.3s; }
+        .form-card:nth-child(4) { animation-delay: 0.4s; }
+        .form-card:nth-child(5) { animation-delay: 0.5s; }
+        .form-card:nth-child(6) { animation-delay: 0.6s; }
+        .form-card:nth-child(7) { animation-delay: 0.7s; }
+        .form-card:nth-child(8) { animation-delay: 0.8s; }
+        .form-card:nth-child(9) { animation-delay: 0.9s; }
+        .form-card:nth-child(10) { animation-delay: 1s; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            form {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 25px;
+            }
+
+            .form-section {
+                padding: 60px 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 30px;
+                padding: 0 20px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .profile-preview img {
+                width: 100px;
+                height: 100px;
+            }
+
+            form {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .form-section {
+                padding: 30px 20px;
+            }
+
+            .form-card {
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .profile-preview img {
+                width: 90px;
+                height: 90px;
+            }
+
+            button[type="submit"] {
+                padding: 14px 32px;
+                font-size: 0.95rem;
+            }
+        }
+        .preview-image {
+    margin-top: 15px;
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="particles" id="particles"></div>
+
+    <div class="config-container">
+        <div class="header-section" >
+            <div class="header-content">
+                <div class="title-section">
+                    <h1>⚙ Configuración</h1>
+                    <p class="subtitle">Personaliza tu perfil y preferencias</p>
+                </div>
+                <div class="profile-header">
+                    <div class="profile-preview">
+                        <!-- Si es Google, mostrar URL -->
+                        <img th:if="${fotoGoogle != null}" th:src="${fotoGoogle}" alt="Foto de Google"/>
+
+                        <!-- Si es local, mostrar base64 -->
+                        <img th:if="${fotoGoogle == null and fotoBase64 != null}"
+                             th:src="'data:image/jpeg;base64,' + ${fotoBase64}"
+                             alt="Foto de perfil"/>
+
+                        <!-- Si no tiene nada, usar avatar por defecto -->
+                        <img th:if="${fotoGoogle == null and fotoBase64 == null}"
+                             src="/images/default-avatar.png" alt="Sin foto"/>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <form th:action="@{/configuracion/guardar}" method="post" enctype="multipart/form-data">
+                <div class="form-card">
+                    <label>Nombre Completo</label>
+                    <input type="text" name="nombreCompleto" th:value="${usuario.nombreCompleto}">
+                </div>
+
+                <div class="form-card">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="correo" th:value="${usuario.correo}">
+                </div>
+
+                <div class="form-card">
+                    <label>Teléfono</label>
+                    <input type="text" name="telefono" th:value="${usuario.telefono}">
+                </div>
+
+
+                <div class="form-card">
+                    <label>Dirección</label>
+                    <input type="text" name="direccion" th:value="${usuario.direccion}">
+                </div>
+
+                <div class="form-card">
+                    <label>Fecha de Nacimiento</label>
+                    <input type="date" name="fechaNacimiento" th:value="${usuario.fechaNacimiento}">
+                </div>
+
+                <div class="form-card">
+                    <label>Ocupación</label>
+                    <input type="text" name="ocupacion" th:value="${usuario.ocupacion}">
+                </div>
+
+                <div class="form-card">
+                    <label>Género</label>
+                    <select name="genero">
+                        <option value="M" th:selected="${usuario.genero == 'M'}">Masculino</option>
+                        <option value="F" th:selected="${usuario.genero == 'F'}">Femenino</option>
+                        <option value="O" th:selected="${usuario.genero == 'O'}">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-card">
+                    <label>Moneda Preferida</label>
+                    <select name="moneda">
+                        <option value="USD" th:selected="${usuario.moneda == 'USD'}">USD ($)</option>
+                        <option value="EUR" th:selected="${usuario.moneda == 'EUR'}">EUR (€)</option>
+                        <option value="MXN" th:selected="${usuario.moneda == 'MXN'}">MXN (Mex$)</option>
+                        <option value="SVC" th:selected="${usuario.moneda == 'SVC'}">SVC (₡)</option>
+                    </select>
+                </div>
+
+                <div class="file-upload-card" th:if="${fotoGoogle == null}">
+                    <label>Actualizar Foto de Perfil</label>
+                    <div class="file-upload-wrapper">
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <svg class="upload-icon"></svg>
+                            <div class="upload-text">Arrastra tu foto aquí o haz clic para seleccionar</div>
+                            <div class="upload-subtext">PNG, JPG, GIF hasta 10MB</div>
+                            <img id="previewImage" class="preview-image" style="display:none;" alt="Vista previa">
+                            <input type="file" name="fotoPerfil" id="fileInput" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="submit-card">
+                    <button type="submit">💾 Guardar Cambios</button>
+                </div>
+            </form>
+
+
+        </div>
+        <a th:href="@{/configuracion/eliminar}" class="btn btn-outline-danger">
+            Eliminar cuenta
+        </a>
+
+    </div>
+
+
+
+
+
+
+</section>
+document.getElementById('fileInput').addEventListener('change', function (e) {
+const file = e.target.files[0];
+if (file) {
+const reader = new FileReader();
+reader.onload = function (ev) {
+const preview = document.getElementById('previewImage');
+preview.src = ev.target.result;
+preview.style.display = 'block';
+}
+reader.readAsDataURL(file);
+}
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+// Crear partículas de fondo
+function createParticles() {
+const particlesContainer = document.getElementById('particles');
+const particleCount = 50;
+
+for (let i = 0; i < particleCount; i++) {
+const particle = document.createElement('div');
+particle.className = 'particle';
+particle.style.left = Math.random() * 100 + '%';
+particle.style.animationDelay = Math.random() * 20 + 's';
+particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+particlesContainer.appendChild(particle);
+}
+}
+
+createParticles();
+
+// Efectos de onda en inputs
+const inputs = document.querySelectorAll('input:not([type="file"]), select');
+inputs.forEach(input => {
+input.addEventListener('focus', function() {
+this.style.transform = 'translateY(-2px) scale(1.02)';
+this.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1), 0 8px 30px rgba(59, 130, 246, 0.2)';
+});
+
+input.addEventListener('blur', function() {
+this.style.transform = 'translateY(0) scale(1)';
+this.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.05)';
+});
+
+// Efecto de escritura
+input.addEventListener('input', function() {
+this.style.borderColor = 'var(--success-color)';
+setTimeout(() => {
+this.style.borderColor = 'transparent';
+}, 300);
+});
+});
+
+// Funcionalidad de carga de archivos mejorada
+const fileInput = document.getElementById('fileInput');
+const fileUploadArea = document.getElementById('fileUploadArea');
+const fileSelected = document.getElementById('fileSelected');
+
+if (fileInput && fileUploadArea && fileSelected) {
+// Manejar selección de archivo
+fileInput.addEventListener('change', function(e) {
+const file = e.target.files[0];
+if (file) {
+fileSelected.textContent = `📁 ${file.name}`;
+fileSelected.classList.add('show');
+fileUploadArea.style.borderColor = 'var(--success-color)';
+} else {
+fileSelected.classList.remove('show');
+fileUploadArea.style.borderColor = 'var(--border-color)';
+}
+});
+
+// Drag and drop functionality
+fileUploadArea.addEventListener('dragover', function(e) {
+e.preventDefault();
+this.classList.add('dragover');
+});
+
+fileUploadArea.addEventListener('dragleave', function(e) {
+e.preventDefault();
+this.classList.remove('dragover');
+});
+
+fileUploadArea.addEventListener('drop', function(e) {
+e.preventDefault();
+this.classList.remove('dragover');
+
+const files = e.dataTransfer.files;
+if (files.length > 0) {
+const file = files[0];
+if (file.type.startsWith('image/')) {
+fileInput.files = files;
+fileSelected.textContent = `📁 ${file.name}`;
+fileSelected.classList.add('show');
+this.style.borderColor = 'var(--success-color)';
+}
+}
+});
+}
+
+// Efecto ripple mejorado en el botón
+const button = document.querySelector('button[type="submit"]');
+button.addEventListener('click', function(e) {
+const rect = this.getBoundingClientRect();
+const x = e.clientX - rect.left;
+const y = e.clientY - rect.top;
+
+const ripple = document.createElement('span');
+ripple.style.position = 'absolute';
+ripple.style.left = x + 'px';
+ripple.style.top = y + 'px';
+ripple.style.width = '0';
+ripple.style.height = '0';
+ripple.style.borderRadius = '50%';
+ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+ripple.style.transform = 'translate(-50%, -50%)';
+ripple.style.animation = 'ripple 0.8s ease-out';
+ripple.style.pointerEvents = 'none';
+
+this.appendChild(ripple);
+
+setTimeout(() => {
+ripple.remove();
+}, 800);
+});
+
+// Animación de entrada para las tarjetas
+const observer = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+if (entry.isIntersecting) {
+entry.target.style.opacity = '1';
+entry.target.style.transform = 'translateY(0)';
+}
+});
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.form-card').forEach(card => {
+observer.observe(card);
+});
+
+// Efecto parallax sutil en el header
+window.addEventListener('scroll', () => {
+const scrolled = window.pageYOffset;
+const header = document.querySelector('.header-section');
+header.style.transform = `translateY(${scrolled * 0.5}px)`;
+});
+});
+
+// Estilos adicionales para animaciones
+const style = document.createElement('style');
+style.textContent = `
+@keyframes ripple {
+to {
+width: 120px;
+height: 120px;
+opacity: 0;
+}
+}
+`;
+document.head.appendChild(style);
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96e529a7c5582b05',t:'MTc1NTA1NjEyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
