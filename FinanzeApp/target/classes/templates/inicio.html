@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="~{layout}" th:attr="data-theme=${modoOscuro ? 'dark' : 'light'}">
+
 
 <head>
     <title>Dashboard</title>
@@ -18,8 +20,6 @@
             --egreso-color: #dc3545;
             --balance-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --primary-color: #667eea;
-            --bg-tertiary: #4f46e5;
         }
 
         [data-theme="dark"] {
@@ -34,8 +34,6 @@
             --ingreso-color: #4ade80;
             --egreso-color: #f87171;
             --balance-bg: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            --primary-color: #4f46e5;
-            --bg-tertiary: #3b82f6;
         }
 
         /* Estilos principales */
@@ -217,7 +215,7 @@
         }
 
         table th {
-            background: var(--bg-primary);
+             background: var(--bg-primary);
             color: var(--text-primary);
             padding: 1rem;
             text-align: left;
@@ -233,7 +231,7 @@
             border-bottom: 1px solid var(--border-color);
             color: var(--text-primary);
             transition: var(--transition);
-            background: var(--bg-primary);
+             background: var(--bg-primary);
         }
 
         table tbody tr {
@@ -250,113 +248,25 @@
         }
 
         .ingreso {
-            color: var(--ingreso-color) !important;
+            color: var(--ingreso-color);
             font-weight: 700;
             position: relative;
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            border-left: 3px solid var(--ingreso-color);
         }
 
         .ingreso::before {
-            content: '↑';
+            content: '↗️';
             margin-right: 0.5rem;
-            font-size: 1.2rem;
-            color: var(--ingreso-color);
-            font-weight: bold;
         }
 
         .egreso {
-            color: var(--egreso-color) !important;
+            color: var(--egreso-color);
             font-weight: 700;
             position: relative;
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            border-left: 3px solid var(--egreso-color);
         }
 
         .egreso::before {
-            content: '↓';
-            margin-right: 0.5rem;
-            font-size: 1.2rem;
-            color: var(--egreso-color);
-            font-weight: bold;
-        }
-
-        .monto-ingreso {
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border-left: 3px solid var(--ingreso-color);
-            color: var(--ingreso-color);
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .monto-egreso {
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border-left: 3px solid var(--egreso-color);
-            color: var(--egreso-color);
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .monto-ingreso::before {
-            content: '↗️';
-            font-size: 1.1rem;
-        }
-
-        .monto-egreso::before {
             content: '↘️';
-            font-size: 1.1rem;
-        }
-
-        .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-            color: white;
-        }
-
-        .action-btn.secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .action-btn.secondary:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
+            margin-right: 0.5rem;
         }
 
         .controles-gasto {
@@ -447,18 +357,17 @@
         .table-wrapper {
             animation-delay: 0.3s;
         }
-
         @media (hover: none) {
-            .form-group:hover {
-                transform: none;
-            }
+    .form-group:hover {
+        transform: none;
+    }
 
-            .btn:hover,
-            .btn-secondary:hover {
-                transform: none;
-                box-shadow: none;
-            }
-        }
+    .btn:hover,
+    .btn-secondary:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
     </style>
 </head>
 <body>
@@ -472,12 +381,12 @@
         <div class="card ingreso">
             <h3>Ingresos Totales</h3>
             <p th:text="${totalIngresos}">$0.00</p>
-            <small th:text="'📈 ' + (${porcentajeIngresos != null} ? (${porcentajeIngresos > 0} ? '+' + ${porcentajeIngresos} + '% vs mes anterior' : ${porcentajeIngresos} + '% vs mes anterior') : 'Sin datos del mes anterior')">📈 +12% vs mes anterior</small>
+            <small>📈 +12% vs mes anterior</small>
         </div>
         <div class="card egreso">
             <h3>Egresos Totales</h3>
             <p th:text="${totalEgresos}">$0.00</p>
-            <small th:text="'📉 ' + (${porcentajeEgresos != null} ? (${porcentajeEgresos > 0} ? '+' + ${porcentajeEgresos} + '% vs mes anterior' : ${porcentajeEgresos} + '% vs mes anterior') : 'Sin datos del mes anterior')">📉 +8% vs mes anterior</small>
+            <small>📉 +8% vs mes anterior</small>
         </div>
         <div class="card balance">
             <h3>Balance Actual</h3>
@@ -518,13 +427,10 @@
                 <td th:text="${#temporals.format(movimiento.fecha, 'dd/MM/yyyy')}">01/08/2025</td>
                 <td th:text="${movimiento.descripcion}">Descripción</td>
                 <td th:text="${movimiento.categoria.nombre}">Categoría</td>
-                <td>
-                    <!-- Mejorada comparación de tipos para ser más flexible -->
-                    <span th:text="${movimiento.tipo}"
-                          th:class="${#strings.toUpperCase(movimiento.tipo) == 'INGRESO'} ? 'ingreso' : 'egreso'">Tipo</span>
-                </td>
-                <td th:class="${#strings.toUpperCase(movimiento.tipo) == 'INGRESO'} ? 'monto-ingreso' : 'monto-egreso'"
-                    th:text="${movimiento.monto}">$0.00</td>
+                <td th:text="${movimiento.tipo}"
+                    th:class="${movimiento.tipo == 'INGRESO'} ? 'ingreso' : 'egreso'">Tipo</td>
+                <td th:text="${movimiento.monto}"
+                    th:class="${movimiento.tipo == 'INGRESO'} ? 'ingreso' : 'egreso'">$0.00</td>
             </tr>
             </tbody>
         </table>
@@ -536,45 +442,5 @@
     </section>
 
 </main>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Añadir efectos hover a las cards
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-4px) scale(1.02)';
-            });
-
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
-
-        // Añadir animación a los números
-        const numbers = document.querySelectorAll('.card p');
-        numbers.forEach(number => {
-            const finalValue = number.textContent;
-            number.textContent = '$0.00';
-
-            setTimeout(() => {
-                number.style.transition = 'all 0.8s ease';
-                number.textContent = finalValue;
-            }, 300);
-        });
-
-        // Mejorar accesibilidad de botones
-        const actionBtns = document.querySelectorAll('.action-btn');
-        actionBtns.forEach(btn => {
-            btn.addEventListener('focus', function() {
-                this.style.outline = '2px solid var(--primary-color)';
-                this.style.outlineOffset = '2px';
-            });
-
-            btn.addEventListener('blur', function() {
-                this.style.outline = 'none';
-            });
-        });
-    });
-</script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96930077830aa53f',t:'MTc1NDE5NDYwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

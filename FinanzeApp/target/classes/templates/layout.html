@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinanzApp</title>
     <!--    <link rel="stylesheet" th:href="@{/css/categoria.css}">-->
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -31,6 +30,7 @@
         }
 
         [data-theme="light"] {
+            --header-gradient: linear-gradient(135deg, #ffffff, #595959);
             --bg-primary: #ffffff;
              --bg-primar: #ffffff;
             --bg-secondary: #f8fafc;
@@ -42,6 +42,7 @@
             --navbar-bg: #ffffff;
             --navbar-text: #1e293b;
             --navbar-hover: #f1f5f9;
+            --card-bg: rgb(255 255 255 / 95%);
         }
 
         [data-theme="dark"] {
@@ -515,6 +516,22 @@ html, body {
         position: relative;
     }
 }
+.profile-btn {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.profile-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #6c63ff; /* opcional: borde morado */
+}
 
     </style>
     <script>
@@ -564,6 +581,7 @@ html, body {
 
 <header class="header">
     <nav class="navbar">
+
         <a href="#" class="logo">
             <i class="fas fa-chart-line"></i>
             FinanzApp
@@ -577,6 +595,7 @@ html, body {
             <li><a th:href="@{/movimientos/nuevo}"><i class="fas fa-exchange-alt"></i> Movimientos</a></li>
             <li><a th:href="@{/categorias}"><i class="fas fa-tags"></i> Categorías</a></li>
             <li><a th:href="@{/analisis}"><i class="fas fa-lightbulb"></i> Analisis</a></li>
+            <li><a th:href="@{/historial}"><i class="fas fa-history"></i> Historial</a></li>
             <li><a th:href="@{/metas}"><i class="fas fa-target"></i> Metas</a></li>
         </ul>
 
@@ -584,9 +603,17 @@ html, body {
             <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">
                 <i class="fas fa-moon" id="theme-icon"></i>
             </button>
-            <button class="settings-btn" th:onclick="|window.location='@{/configuracion}'|" title="Configuración">
-                <i class="fas fa-cog"></i>
-            </button>
+            <a th:href="@{/configuracion}" class="profile-btn" title="Configuración">
+                <img th:if="${fotoPerfilNavbar != null}"
+                     th:src="${fotoPerfilNavbar}"
+                     class="profile-icon" alt="Foto de perfil"/>
+
+                <img th:if="${fotoPerfilNavbar == null}"
+                     th:src="${fotoPerfilNavbar}"
+                     class="profile-icon" alt="Avatar por defecto"/>
+            </a>
+
+
             <button class="logout-btn" th:onclick="|window.location='@{/logout}'|" title="Cerrar sesión">
                 <i class="fas fa-sign-out-alt"></i>
             </button>

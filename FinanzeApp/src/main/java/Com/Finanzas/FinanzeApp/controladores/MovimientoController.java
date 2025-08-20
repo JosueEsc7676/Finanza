@@ -12,11 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/movimientos")
@@ -74,22 +71,6 @@ public class MovimientoController {
         return "new_movimiento";
     }
 
-    @GetMapping("/api/categoria/{id}/tipo")
-    @ResponseBody
-    public ResponseEntity<String> obtenerTipoCategoria(@PathVariable Long id) {
-        Usuario usuario = getUsuarioAutenticado();
-        if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        Optional<Categoria> categoria = categoriaRepository.findById(id);
-        if (categoria.isPresent() && categoria.get().getUsuario().getId().equals(usuario.getId())) {
-            return ResponseEntity.ok(categoria.get().getTipo());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @PostMapping("/nuevo")
     public String guardarMovimiento(@ModelAttribute Movimiento movimiento) {
         Usuario usuario = getUsuarioAutenticado();
@@ -100,15 +81,52 @@ public class MovimientoController {
         Categoria categoria = categoriaRepository.findById(movimiento.getCategoriaId()).orElse(null);
         if (categoria != null && categoria.getUsuario().getId().equals(usuario.getId())) {
             movimiento.setCategoria(categoria);
-
-            if (movimiento.getTipo() == null || movimiento.getTipo().isEmpty()) {
-                movimiento.setTipo(categoria.getTipo());
-            }
         } else {
             return "redirect:/movimientos/nuevo?error=categoria";
         }
 
         movimientoRepository.save(movimiento);
         return "redirect:/inicio";
+    }
+
+    @PostMapping("/editar/{id}")
+    public String editarMovimiento(@PathVariable Long id, @ModelAttribute Movimiento movimientoEditado) {
+        Usuario usuario = getUsuarioAutenticado();
+        if (usuario == null) return "redirect:/login";
+
+        Movimiento movimientoExistente = movimientoRepository.findById(id).orElse(null);
+        if (movimientoExistente == null || !movimientoExistente.getUsuario().getId().equals(usuario.getId())) {
+            return "redirect:/movimientos/nuevo?error=acceso";
+        }
+
+        // Verificar que la categoría pertenece al usuario
+        Categoria categoria = categoriaRepository.findById(movimientoEditado.getCategoriaId()).orElse(null);
+        if (categoria != null && categoria.getUsuario().getId().equals(usuario.getId())) {
+            movimientoExistente.setTipo(movimientoEditado.getTipo());
+            movimientoExistente.setCategoria(categoria);
+            movimientoExistente.setCategoriaId(movimientoEditado.getCategoriaId());
+            movimientoExistente.setMonto(movimientoEditado.getMonto());
+            movimientoExistente.setFecha(movimientoEditado.getFecha());
+            movimientoExistente.setDescripcion(movimientoEditado.getDescripcion());
+
+            movimientoRepository.save(movimientoExistente);
+        } else {
+            return "redirect:/movimientos/nuevo?error=categoria";
+        }
+
+        return "redirect:/movimientos/nuevo";
+    }
+
+    @PostMapping("/eliminar/{id}")
+    public String eliminarMovimiento(@PathVariable Long id) {
+        Usuario usuario = getUsuarioAutenticado();
+        if (usuario == null) return "redirect:/login";
+
+        Movimiento movimiento = movimientoRepository.findById(id).orElse(null);
+        if (movimiento != null && movimiento.getUsuario().getId().equals(usuario.getId())) {
+            movimientoRepository.delete(movimiento);
+        }
+
+        return "redirect:/movimientos/nuevo";
     }
 }

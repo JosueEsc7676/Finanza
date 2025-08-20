@@ -2,8 +2,10 @@ package Com.Finanzas.FinanzeApp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class FinanzeAppApplication {
 
 	public static void main(String[] args) {

@@ -94,7 +94,6 @@
             position: relative;
             z-index: 2;
             margin-top: -55px;
-
         }
 
         /* Header flotante */
@@ -105,10 +104,8 @@
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
-
         }
-            .xd{
-            }
+
         .header-section::before {
             content: '';
             position: absolute;
@@ -155,8 +152,7 @@
             position: relative;
             animation: slideInRight 1s ease-out 0.5s both;
             width: 60px;
-                left: -40px;
-
+            left: -40px;
         }
 
         .profile-preview {
@@ -179,7 +175,8 @@
             box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
             border-color: rgba(255, 255, 255, 0.6);
         }
- /* Sección del formulario */
+
+        /* Sección del formulario */
         .form-section {
             max-width: 1400px;
             margin: 0 auto;
@@ -560,15 +557,15 @@
                 font-size: 0.95rem;
             }
         }
-        .preview-image {
-    margin-top: 15px;
-    max-width: 150px;
-    max-height: 150px;
-    border-radius: 8px;
-    object-fit: cover;
-    border: 2px solid var(--border-color);
-}
 
+        .preview-image {
+            margin-top: 15px;
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -576,7 +573,7 @@
     <div class="particles" id="particles"></div>
 
     <div class="config-container">
-        <div class="header-section" >
+        <div class="header-section">
             <div class="header-content">
                 <div class="title-section">
                     <h1>⚙ Configuración</h1>
@@ -596,7 +593,6 @@
                         <img th:if="${fotoGoogle == null and fotoBase64 == null}"
                              src="/images/default-avatar.png" alt="Sin foto"/>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -617,7 +613,6 @@
                     <label>Teléfono</label>
                     <input type="text" name="telefono" th:value="${usuario.telefono}">
                 </div>
-
 
                 <div class="form-card">
                     <label>Dirección</label>
@@ -666,191 +661,185 @@
                     </div>
                 </div>
 
-
-
-
                 <div class="submit-card">
                     <button type="submit">💾 Guardar Cambios</button>
                 </div>
             </form>
-
-
         </div>
+
+        <!-- Agregando botón de prueba de notificaciones similar al de eliminar cuenta -->
+        <a th:href="@{/configuracion/test-notificaciones}" class="btn btn-outline-primary" style="margin-left: 20px;">
+            📧 Probar Notificaciones
+        </a>
         <a th:href="@{/configuracion/eliminar}" class="btn btn-outline-danger">
             Eliminar cuenta
         </a>
-
     </div>
-
-
-
-
-
-
 </section>
-document.getElementById('fileInput').addEventListener('change', function (e) {
-const file = e.target.files[0];
-if (file) {
-const reader = new FileReader();
-reader.onload = function (ev) {
-const preview = document.getElementById('previewImage');
-preview.src = ev.target.result;
-preview.style.display = 'block';
-}
-reader.readAsDataURL(file);
-}
-});
 
+<script>
+    document.getElementById('fileInput').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+                const preview = document.getElementById('previewImage');
+                preview.src = ev.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        // Crear partículas de fondo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
 
-document.addEventListener('DOMContentLoaded', function() {
-// Crear partículas de fondo
-function createParticles() {
-const particlesContainer = document.getElementById('particles');
-const particleCount = 50;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
 
-for (let i = 0; i < particleCount; i++) {
-const particle = document.createElement('div');
-particle.className = 'particle';
-particle.style.left = Math.random() * 100 + '%';
-particle.style.animationDelay = Math.random() * 20 + 's';
-particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
-particlesContainer.appendChild(particle);
-}
-}
+        createParticles();
 
-createParticles();
+        // Efectos de onda en inputs
+        const inputs = document.querySelectorAll('input:not([type="file"]), select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'translateY(-2px) scale(1.02)';
+                this.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1), 0 8px 30px rgba(59, 130, 246, 0.2)';
+            });
 
-// Efectos de onda en inputs
-const inputs = document.querySelectorAll('input:not([type="file"]), select');
-inputs.forEach(input => {
-input.addEventListener('focus', function() {
-this.style.transform = 'translateY(-2px) scale(1.02)';
-this.style.boxShadow = '0 0 0 4px rgba(59, 130, 246, 0.1), 0 8px 30px rgba(59, 130, 246, 0.2)';
-});
+            input.addEventListener('blur', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.05)';
+            });
 
-input.addEventListener('blur', function() {
-this.style.transform = 'translateY(0) scale(1)';
-this.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.05)';
-});
+            // Efecto de escritura
+            input.addEventListener('input', function() {
+                this.style.borderColor = 'var(--success-color)';
+                setTimeout(() => {
+                    this.style.borderColor = 'transparent';
+                }, 300);
+            });
+        });
 
-// Efecto de escritura
-input.addEventListener('input', function() {
-this.style.borderColor = 'var(--success-color)';
-setTimeout(() => {
-this.style.borderColor = 'transparent';
-}, 300);
-});
-});
+        // Funcionalidad de carga de archivos mejorada
+        const fileInput = document.getElementById('fileInput');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileSelected = document.getElementById('fileSelected');
 
-// Funcionalidad de carga de archivos mejorada
-const fileInput = document.getElementById('fileInput');
-const fileUploadArea = document.getElementById('fileUploadArea');
-const fileSelected = document.getElementById('fileSelected');
+        if (fileInput && fileUploadArea && fileSelected) {
+            // Manejar selección de archivo
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileSelected.textContent = `📁 ${file.name}`;
+                    fileSelected.classList.add('show');
+                    fileUploadArea.style.borderColor = 'var(--success-color)';
+                } else {
+                    fileSelected.classList.remove('show');
+                    fileUploadArea.style.borderColor = 'var(--border-color)';
+                }
+            });
 
-if (fileInput && fileUploadArea && fileSelected) {
-// Manejar selección de archivo
-fileInput.addEventListener('change', function(e) {
-const file = e.target.files[0];
-if (file) {
-fileSelected.textContent = `📁 ${file.name}`;
-fileSelected.classList.add('show');
-fileUploadArea.style.borderColor = 'var(--success-color)';
-} else {
-fileSelected.classList.remove('show');
-fileUploadArea.style.borderColor = 'var(--border-color)';
-}
-});
+            // Drag and drop functionality
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
 
-// Drag and drop functionality
-fileUploadArea.addEventListener('dragover', function(e) {
-e.preventDefault();
-this.classList.add('dragover');
-});
+            fileUploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
 
-fileUploadArea.addEventListener('dragleave', function(e) {
-e.preventDefault();
-this.classList.remove('dragover');
-});
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
 
-fileUploadArea.addEventListener('drop', function(e) {
-e.preventDefault();
-this.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.type.startsWith('image/')) {
+                        fileInput.files = files;
+                        fileSelected.textContent = `📁 ${file.name}`;
+                        fileSelected.classList.add('show');
+                        this.style.borderColor = 'var(--success-color)';
+                    }
+                }
+            });
+        }
 
-const files = e.dataTransfer.files;
-if (files.length > 0) {
-const file = files[0];
-if (file.type.startsWith('image/')) {
-fileInput.files = files;
-fileSelected.textContent = `📁 ${file.name}`;
-fileSelected.classList.add('show');
-this.style.borderColor = 'var(--success-color)';
-}
-}
-});
-}
+        // Efecto ripple mejorado en el botón
+        const button = document.querySelector('button[type="submit"]');
+        button.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-// Efecto ripple mejorado en el botón
-const button = document.querySelector('button[type="submit"]');
-button.addEventListener('click', function(e) {
-const rect = this.getBoundingClientRect();
-const x = e.clientX - rect.left;
-const y = e.clientY - rect.top;
+            const ripple = document.createElement('span');
+            ripple.style.position = 'absolute';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.width = '0';
+            ripple.style.height = '0';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+            ripple.style.transform = 'translate(-50%, -50%)';
+            ripple.style.animation = 'ripple 0.8s ease-out';
+            ripple.style.pointerEvents = 'none';
 
-const ripple = document.createElement('span');
-ripple.style.position = 'absolute';
-ripple.style.left = x + 'px';
-ripple.style.top = y + 'px';
-ripple.style.width = '0';
-ripple.style.height = '0';
-ripple.style.borderRadius = '50%';
-ripple.style.background = 'rgba(255, 255, 255, 0.6)';
-ripple.style.transform = 'translate(-50%, -50%)';
-ripple.style.animation = 'ripple 0.8s ease-out';
-ripple.style.pointerEvents = 'none';
+            this.appendChild(ripple);
 
-this.appendChild(ripple);
+            setTimeout(() => {
+                ripple.remove();
+            }, 800);
+        });
 
-setTimeout(() => {
-ripple.remove();
-}, 800);
-});
+        // Animación de entrada para las tarjetas
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
 
-// Animación de entrada para las tarjetas
-const observer = new IntersectionObserver((entries) => {
-entries.forEach(entry => {
-if (entry.isIntersecting) {
-entry.target.style.opacity = '1';
-entry.target.style.transform = 'translateY(0)';
-}
-});
-}, { threshold: 0.1 });
+        document.querySelectorAll('.form-card').forEach(card => {
+            observer.observe(card);
+        });
 
-document.querySelectorAll('.form-card').forEach(card => {
-observer.observe(card);
-});
+        // Efecto parallax sutil en el header
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const header = document.querySelector('.header-section');
+            header.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+    });
 
-// Efecto parallax sutil en el header
-window.addEventListener('scroll', () => {
-const scrolled = window.pageYOffset;
-const header = document.querySelector('.header-section');
-header.style.transform = `translateY(${scrolled * 0.5}px)`;
-});
-});
-
-// Estilos adicionales para animaciones
-const style = document.createElement('style');
-style.textContent = `
-@keyframes ripple {
-to {
-width: 120px;
-height: 120px;
-opacity: 0;
-}
-}
-`;
-document.head.appendChild(style);
+    // Estilos adicionales para animaciones
+    const style = document.createElement('style');
+    style.textContent = `
+    @keyframes ripple {
+        to {
+            width: 120px;
+            height: 120px;
+            opacity: 0;
+        }
+    }
+    `;
+    document.head.appendChild(style);
 </script>
 
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96e529a7c5582b05',t:'MTc1NTA1NjEyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96e529a7c5582b05',t:'MTc1NTA1NjEyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
 </html>

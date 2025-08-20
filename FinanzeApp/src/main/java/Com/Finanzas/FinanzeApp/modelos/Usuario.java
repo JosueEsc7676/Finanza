@@ -48,10 +48,17 @@ public class Usuario {
     // 🔹 Nuevo: id del proveedor (sub de Google u otro)
     @Column(name = "proveedor_id")
     private String proveedorId;
+
+    @Column(name = "ultimo_recordatorio")
+    private java.time.LocalDateTime ultimoRecordatorio;
+
+    @Column(name = "notificaciones_activas")
+    private Boolean notificacionesActivas = true;
+
     // Aquí pones la relación con Movimiento:
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Movimiento> movimientos;
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Categoria> categorias;
 }
