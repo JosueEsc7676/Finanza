@@ -109,4 +109,25 @@ public class EmailService {
 
         mailSender.send(mensaje);
     }
+    // ✅ (9) Recordatorio de ingreso de datos
+    public void enviarRecordatorioIngresosDatos(String to, String nombre) throws MessagingException {
+        MimeMessage mensaje = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+
+        helper.setTo(to);
+        helper.setSubject("Recordatorio: Actualiza tus finanzas - FinanzeApp");
+        helper.setText("<p>Hola " + nombre + ",</p>" +
+                "<p>¡No olvides mantener tus finanzas al día! Te recordamos que ingreses tus últimos movimientos financieros.</p>" +
+                "<p>Mantener un registro actualizado te ayudará a:</p>" +
+                "<ul>" +
+                "<li>Controlar mejor tus gastos</li>" +
+                "<li>Identificar patrones de consumo</li>" +
+                "<li>Alcanzar tus metas financieras</li>" +
+                "</ul>" +
+                "<p><a href=\"https://finanzeapp.pagekite.me/new_movimiento\" style=\"background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;\">Ingresar Movimientos</a></p>" +
+                "<p>¡Gracias por usar FinanzeApp!</p>", true);
+
+        mailSender.send(mensaje);
+    }
 }
+

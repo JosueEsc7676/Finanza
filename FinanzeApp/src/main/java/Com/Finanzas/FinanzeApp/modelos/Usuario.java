@@ -53,5 +53,10 @@ public class Usuario {
     private List<Movimiento> movimientos;
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
 
+  @Column(name = "notificaciones_activas")
+    private Boolean notificacionesActivas=true;
+
     private List<Categoria> categorias;
+    @Column(name = "ultimo_recordatorio")
+    private java.time.LocalDateTime ultimoRecordatorio;
 }
