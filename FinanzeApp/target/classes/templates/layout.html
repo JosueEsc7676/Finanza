@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinanzApp</title>
     <!--    <link rel="stylesheet" th:href="@{/css/categoria.css}">-->
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -610,7 +609,7 @@ html, body {
                      class="profile-icon" alt="Foto de perfil"/>
 
                 <img th:if="${fotoPerfilNavbar == null}"
-                     src="/images/default-avatar.png"
+                     th:src="${fotoPerfilNavbar}"
                      class="profile-icon" alt="Avatar por defecto"/>
             </a>
 

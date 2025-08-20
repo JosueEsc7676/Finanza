@@ -15,6 +15,7 @@ public interface UsuarioServicio {
     boolean eliminarPorId(Long id);
     boolean verificarCredenciales(String correo, String contrasena);
     Long obtenerIdPorCorreo(String correo);
+
 }
 
 

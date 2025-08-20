@@ -3,6 +3,8 @@ package Com.Finanzas.FinanzeApp.modelos;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Usuario {
@@ -46,4 +48,10 @@ public class Usuario {
     // 🔹 Nuevo: id del proveedor (sub de Google u otro)
     @Column(name = "proveedor_id")
     private String proveedorId;
+    // Aquí pones la relación con Movimiento:
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Movimiento> movimientos;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE, orphanRemoval = true)
+
+    private List<Categoria> categorias;
 }

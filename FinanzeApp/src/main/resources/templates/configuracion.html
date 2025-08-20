@@ -618,6 +618,7 @@
                     <input type="text" name="telefono" th:value="${usuario.telefono}">
                 </div>
 
+
                 <div class="form-card">
                     <label>Dirección</label>
                     <input type="text" name="direccion" th:value="${usuario.direccion}">
@@ -667,13 +668,25 @@
 
 
 
+
                 <div class="submit-card">
                     <button type="submit">💾 Guardar Cambios</button>
                 </div>
             </form>
 
+
         </div>
+        <a th:href="@{/configuracion/eliminar}" class="btn btn-outline-danger">
+            Eliminar cuenta
+        </a>
+
     </div>
+
+
+
+
+
+
 </section>
 document.getElementById('fileInput').addEventListener('change', function (e) {
 const file = e.target.files[0];
@@ -838,5 +851,6 @@ opacity: 0;
 `;
 document.head.appendChild(style);
 </script>
+
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96e529a7c5582b05',t:'MTc1NTA1NjEyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

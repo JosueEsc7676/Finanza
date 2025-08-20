@@ -37,6 +37,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         UsuarioDetailService UsuarioDetailService;
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/usuarios/**") // tus endpoints REST si son stateless
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
