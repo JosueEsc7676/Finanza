@@ -4,6 +4,7 @@ import Com.Finanzas.FinanzeApp.modelos.Movimiento;
 import Com.Finanzas.FinanzeApp.modelos.Usuario;
 import Com.Finanzas.FinanzeApp.repositorios.MovimientoRepository;
 import Com.Finanzas.FinanzeApp.repositorios.UsuarioRepositorio;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -126,13 +127,15 @@ public class LoginController {
 
     @GetMapping("/inicio")
     public String mostrarInicio(Model model,
+                                HttpSession session,
                                 @AuthenticationPrincipal OAuth2User oauthUser,
                                 Authentication authentication) {
         String correo = null;
 
+        // --- Login Google ---
         if (oauthUser != null) {
             correo = oauthUser.getAttribute("email");
-            var usuarioExistente = usuarioRepositorio.findByCorreo(correo).orElse(null);
+            Usuario usuarioExistente = usuarioRepositorio.findByCorreo(correo).orElse(null);
             if (usuarioExistente == null) {
                 Usuario nuevo = new Usuario();
                 nuevo.setCorreo(correo);
@@ -140,11 +143,12 @@ public class LoginController {
                 nuevo.setContrasena("{noop}GOOGLE");
                 nuevo.setProveedor("GOOGLE");
                 nuevo.setProveedorId(oauthUser.getAttribute("sub"));
-                nuevo.setFotoUrl(oauthUser.getAttribute("picture")); // 👈 Guardar URL de foto
+                nuevo.setFotoUrl(oauthUser.getAttribute("picture"));
                 usuarioRepositorio.save(nuevo);
             }
         } else {
-            correo = authentication.getName(); // login normal
+            // --- Login normal ---
+            correo = authentication.getName();
         }
 
         if (correo == null) {
@@ -156,9 +160,10 @@ public class LoginController {
             return "redirect:/login";
         }
 
+        // ✅ Usuario al modelo
         model.addAttribute("usuario", usuario);
 
-        // 👇 Aquí decides qué foto mandar al frontend
+        // ✅ Foto de perfil
         if ("GOOGLE".equals(usuario.getProveedor()) && usuario.getFotoUrl() != null) {
             model.addAttribute("fotoGoogle", usuario.getFotoUrl());
         } else if (usuario.getFotoPerfil() != null) {
@@ -166,6 +171,7 @@ public class LoginController {
                     Base64.getEncoder().encodeToString(usuario.getFotoPerfil()));
         }
 
+        // ✅ Movimientos y balance
         Double totalIngresos = movimientoRepository.totalIngresos(usuario.getId());
         Double totalEgresos = movimientoRepository.totalEgresos(usuario.getId());
         totalIngresos = totalIngresos != null ? totalIngresos : 0.0;
@@ -178,7 +184,14 @@ public class LoginController {
                 movimientoRepository.findTop4ByUsuarioIdOrderByFechaDesc(usuario.getId()));
         model.addAttribute("modoOscuro", Boolean.TRUE.equals(usuario.getModoOscuro()));
 
+        // ✅ Notificación (solo una vez)
+        if (Boolean.TRUE.equals(session.getAttribute("mostrarNotificacion"))) {
+            model.addAttribute("notificacion", "Completa tus datos en configuración para continuar.");
+            session.removeAttribute("mostrarNotificacion");
+        }
+
         return "inicio";
     }
+
 
 }

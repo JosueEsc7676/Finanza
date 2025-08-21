@@ -1399,7 +1399,28 @@
             <li><a th:href="@{/historial}"><i class="fas fa-history"></i> Historial</a></li>
             <li><a th:href="@{/metas}"><i class="fas fa-target"></i> Metas</a></li>
         </ul>
-        <div class="nav-controls">
+        <div class="nav-controls flex items-center space-x-4">
+            <div class="relative">
+                <button onclick="toggleNotificacion()" class="text-white hover:text-blue-400 relative">
+                    <i class="fa-solid fa-bell"></i>
+                    <!-- Badge de notificación -->
+                    <span th:if="${notificacion != null}"
+                          class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1">
+    1
+</span>
+                </button>
+
+                <!-- Dropdown de notificación -->
+                <div id="notificacion-box"
+                     th:if="${notificacion != null}"
+                     class="hidden absolute right-0 mt-2 w-64 bg-gray-800 text-white rounded-lg shadow-lg p-4 z-50">
+                    <p th:text="${notificacion}"></p>
+                    <a href="/perfil"
+                       class="mt-2 block bg-blue-600 hover:bg-blue-700 text-center rounded-lg py-1">
+                        Completar Perfil
+                    </a>
+                </div>
+            </div>
             <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema"><i class="fas fa-sun" id="theme-icon"></i></button>
             <a th:href="@{/configuracion}" class="profile-btn" title="Configuración"><img th:src="${fotoPerfilNavbar != null ? fotoPerfilNavbar : '/images/default-avatar.png'}" class="profile-icon" alt="Foto de perfil"/></a>
             <button class="logout-btn" th:onclick="|window.location='@{/logout}'|" title="Cerrar sesión"><i class="fas fa-power-off"></i></button>
@@ -1416,193 +1437,198 @@
 </main>
 
 <script>
-    function toggleTheme() {
-        const currentTheme = document.body.getAttribute("data-theme");
-        const newTheme = currentTheme === "dark" ? "light" : "dark";
-        document.body.setAttribute("data-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
-        updateThemeIcon();
-        updateToggleStates();
+    function toggleNotificacion() {
+    const box = document.getElementById("notificacion-box");
+    box.classList.toggle("hidden");
+}
+
+function toggleTheme() {
+    const currentTheme = document.body.getAttribute("data-theme");
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    document.body.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+    updateThemeIcon();
+    updateToggleStates();
+
+    // Add visual feedback
+    const button = document.querySelector('.theme-toggle');
+    button.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+        button.style.transform = 'scale(1)';
+    }, 150);
+}
+
+function updateThemeIcon() {
+    const icon = document.getElementById("theme-icon");
+    const isDark = document.body.getAttribute("data-theme") === "dark";
+    icon.className = isDark ? "fas fa-sun" : "fas fa-moon";
+}
+
+function updateToggleStates() {
+    const isDark = document.body.getAttribute("data-theme") === "dark";
+    const darkModeToggle = document.getElementById("darkModeToggle");
+
+    if (isDark) {
+        darkModeToggle.classList.add("active");
+    } else {
+        darkModeToggle.classList.remove("active");
+    }
+}
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+        document.body.setAttribute("data-theme", savedTheme);
+    } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) {
+            document.body.setAttribute("data-theme", "dark");
+        }
+    }
+    updateThemeIcon();
+    updateToggleStates();
+}
+
+function openSettings() {
+    const modal = document.getElementById('settingsModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSettings() {
+    const modal = document.getElementById('settingsModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function toggleNotifications() {
+    const toggle = document.getElementById('notificationsToggle');
+    toggle.classList.toggle('active');
+
+    const isActive = toggle.classList.contains('active');
+    localStorage.setItem('notifications', isActive);
+
+    // Show feedback
+    const label = toggle.parentElement.querySelector('.setting-label');
+    const originalText = label.textContent;
+    label.textContent = isActive ? 'Notificaciones Activadas' : 'Notificaciones Desactivadas';
+    setTimeout(() => {
+        label.textContent = originalText;
+    }, 2000);
+}
+
+function toggleCompactMode() {
+    const toggle = document.getElementById('compactModeToggle');
+    toggle.classList.toggle('active');
+
+    const isActive = toggle.classList.contains('active');
+    localStorage.setItem('compactMode', isActive);
+
+    // Apply compact mode styles
+    if (isActive) {
+        document.body.classList.add('compact-mode');
+    } else {
+        document.body.classList.remove('compact-mode');
+    }
+}
+
+function toggleAnimations() {
+    const toggle = document.getElementById('animationsToggle');
+    toggle.classList.toggle('active');
+
+    const isActive = toggle.classList.contains('active');
+    localStorage.setItem('animations', isActive);
+
+    // Apply animation preferences
+    if (!isActive) {
+        document.body.style.setProperty('--animation-duration', '0s');
+    } else {
+        document.body.style.removeProperty('--animation-duration');
+    }
+}
+
+// Close modal when clicking outside
+document.getElementById('settingsModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeSettings();
+    }
+});
+
+// Navigation active state
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', function() {
+        // Remove active class from all links
+        document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+
+        // Add active class to clicked link
+        this.classList.add('active');
 
         // Add visual feedback
-        const button = document.querySelector('.theme-toggle');
-        button.style.transform = 'scale(0.9)';
+        this.style.transform = 'translateY(-4px) scale(1.05)';
         setTimeout(() => {
-            button.style.transform = 'scale(1)';
-        }, 150);
-    }
-
-    function updateThemeIcon() {
-        const icon = document.getElementById("theme-icon");
-        const isDark = document.body.getAttribute("data-theme") === "dark";
-        icon.className = isDark ? "fas fa-sun" : "fas fa-moon";
-    }
-
-    function updateToggleStates() {
-        const isDark = document.body.getAttribute("data-theme") === "dark";
-        const darkModeToggle = document.getElementById("darkModeToggle");
-
-        if (isDark) {
-            darkModeToggle.classList.add("active");
-        } else {
-            darkModeToggle.classList.remove("active");
-        }
-    }
-
-    function loadTheme() {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme) {
-            document.body.setAttribute("data-theme", savedTheme);
-        } else {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (prefersDark) {
-                document.body.setAttribute("data-theme", "dark");
-            }
-        }
-        updateThemeIcon();
-        updateToggleStates();
-    }
-
-    function openSettings() {
-        const modal = document.getElementById('settingsModal');
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSettings() {
-        const modal = document.getElementById('settingsModal');
-        modal.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-
-    function toggleNotifications() {
-        const toggle = document.getElementById('notificationsToggle');
-        toggle.classList.toggle('active');
-
-        const isActive = toggle.classList.contains('active');
-        localStorage.setItem('notifications', isActive);
-
-        // Show feedback
-        const label = toggle.parentElement.querySelector('.setting-label');
-        const originalText = label.textContent;
-        label.textContent = isActive ? 'Notificaciones Activadas' : 'Notificaciones Desactivadas';
-        setTimeout(() => {
-            label.textContent = originalText;
-        }, 2000);
-    }
-
-    function toggleCompactMode() {
-        const toggle = document.getElementById('compactModeToggle');
-        toggle.classList.toggle('active');
-
-        const isActive = toggle.classList.contains('active');
-        localStorage.setItem('compactMode', isActive);
-
-        // Apply compact mode styles
-        if (isActive) {
-            document.body.classList.add('compact-mode');
-        } else {
-            document.body.classList.remove('compact-mode');
-        }
-    }
-
-    function toggleAnimations() {
-        const toggle = document.getElementById('animationsToggle');
-        toggle.classList.toggle('active');
-
-        const isActive = toggle.classList.contains('active');
-        localStorage.setItem('animations', isActive);
-
-        // Apply animation preferences
-        if (!isActive) {
-            document.body.style.setProperty('--animation-duration', '0s');
-        } else {
-            document.body.style.removeProperty('--animation-duration');
-        }
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('settingsModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeSettings();
-        }
+            this.style.transform = 'translateY(-2px)';
+        }, 200);
     });
+});
 
-    // Navigation active state
+// Load saved preferences
+function loadPreferences() {
+    // Load theme
+    loadTheme();
+
+    // Load notifications preference
+    const notifications = localStorage.getItem('notifications');
+    if (notifications === 'true') {
+        document.getElementById('notificationsToggle').classList.add('active');
+    }
+
+    // Load compact mode preference
+    const compactMode = localStorage.getItem('compactMode');
+    if (compactMode === 'true') {
+        document.getElementById('compactModeToggle').classList.add('active');
+        document.body.classList.add('compact-mode');
+    }
+
+    // Load animations preference
+    const animations = localStorage.getItem('animations');
+    if (animations === 'false') {
+        document.getElementById('animationsToggle').classList.remove('active');
+        document.body.style.setProperty('--animation-duration', '0s');
+    }
+}
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", function() {
+    loadPreferences();
+
+    // Add entrance animation
+    document.body.style.opacity = '0';
+    setTimeout(() => {
+        document.body.style.transition = 'opacity 0.5s ease';
+        document.body.style.opacity = '1';
+    }, 100);
+
+    // Set current page as active based on URL
+    const currentPath = window.location.pathname;
     document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', function() {
-            // Remove active class from all links
-            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+        if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
+            link.classList.add('active');
+        }
+    });
+});
 
-            // Add active class to clicked link
-            this.classList.add('active');
-
-            // Add visual feedback
-            this.style.transform = 'translateY(-4px) scale(1.05)';
-            setTimeout(() => {
-                this.style.transform = 'translateY(-2px)';
-            }, 200);
-        });
+// Add hover effects to navigation
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-2px) scale(1.02)';
     });
 
-    // Load saved preferences
-    function loadPreferences() {
-        // Load theme
-        loadTheme();
-
-        // Load notifications preference
-        const notifications = localStorage.getItem('notifications');
-        if (notifications === 'true') {
-            document.getElementById('notificationsToggle').classList.add('active');
+    link.addEventListener('mouseleave', function() {
+        if (!this.classList.contains('active')) {
+            this.style.transform = 'translateY(0) scale(1)';
         }
-
-        // Load compact mode preference
-        const compactMode = localStorage.getItem('compactMode');
-        if (compactMode === 'true') {
-            document.getElementById('compactModeToggle').classList.add('active');
-            document.body.classList.add('compact-mode');
-        }
-
-        // Load animations preference
-        const animations = localStorage.getItem('animations');
-        if (animations === 'false') {
-            document.getElementById('animationsToggle').classList.remove('active');
-            document.body.style.setProperty('--animation-duration', '0s');
-        }
-    }
-
-    // Initialize on page load
-    document.addEventListener("DOMContentLoaded", function() {
-        loadPreferences();
-
-        // Add entrance animation
-        document.body.style.opacity = '0';
-        setTimeout(() => {
-            document.body.style.transition = 'opacity 0.5s ease';
-            document.body.style.opacity = '1';
-        }, 100);
-
-        // Set current page as active based on URL
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
-                link.classList.add('active');
-            }
-        });
     });
-
-    // Add hover effects to navigation
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px) scale(1.02)';
-        });
-
-        link.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('active')) {
-                this.style.transform = 'translateY(0) scale(1)';
-            }
-        });
-    });
+});
 </script>
 <script>
     // Esto aplica el tema guardado ANTES de que el contenido se pinte

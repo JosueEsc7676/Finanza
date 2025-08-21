@@ -22,6 +22,7 @@ public class Usuario {
     private String fechaNacimiento;
     private String ocupacion;
     private String genero;
+    private boolean datosCompletos = false; // 🔑 Nuevo campo
 
     @Column(name = "token_recuperacion")
     private String tokenRecuperacion;

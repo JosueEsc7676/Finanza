@@ -30,5 +30,20 @@ public class GlobalControllerAdvice {
         }
         return "/images/default-avatar.png";
     }
+    @ModelAttribute("notificacionCompletarInfo")
+    public String notificacionCompletarInfo(Authentication authentication) {
+        if (authentication == null) return null;
+
+        String correo = authentication.getName();
+        Usuario usuario = usuarioRepositorio.findByCorreo(correo).orElse(null);
+
+        if (usuario != null && "GOOGLE".equalsIgnoreCase(usuario.getProveedor())) {
+            // Validar datos básicos (ajústalo a lo que consideres "incompleto")
+            if (usuario.getTelefono() == null || usuario.getDireccion() == null) {
+                return "Por favor completa tu información de perfil";
+            }
+        }
+        return null;
+    }
 
 }

@@ -677,13 +677,18 @@
                 <div class="submit-card">
                     <button type="submit">💾 Guardar Cambios</button>
                 </div>
+                <a th:href="@{/configuracion/eliminar}" class="btn btn-outline-danger">
+                    Eliminar cuenta
+                </a>
+                <!-- Agregando botón de prueba de notificaciones similar al de eliminar cuenta -->
+                <a th:href="@{/configuracion/test-notificaciones}" class="btn btn-outline-primary" style="margin-left: 20px;">
+                    📧 Probar Notificaciones
+                </a>
+
             </form>
 
 
         </div>
-        <a th:href="@{/configuracion/eliminar}" class="btn btn-outline-danger">
-            Eliminar cuenta
-        </a>
 
     </div>
 
