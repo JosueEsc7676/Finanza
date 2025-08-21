@@ -14,10 +14,9 @@ public class GlobalControllerAdvice {
 
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
-
     @ModelAttribute("fotoPerfilNavbar")
     public String fotoPerfil(Authentication authentication) {
-        if (authentication == null) return null;
+        if (authentication == null) return "/images/default-avatar.png";
 
         String correo = authentication.getName();
         Usuario usuario = usuarioRepositorio.findByCorreo(correo).orElse(null);
@@ -29,6 +28,7 @@ public class GlobalControllerAdvice {
                 return "data:image/png;base64," + Base64.getEncoder().encodeToString(usuario.getFotoPerfil());
             }
         }
-        return null;
+        return "/images/default-avatar.png";
     }
+
 }

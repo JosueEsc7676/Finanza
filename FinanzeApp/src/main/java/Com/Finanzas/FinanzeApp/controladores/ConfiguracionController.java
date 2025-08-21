@@ -186,24 +186,48 @@ public class ConfiguracionController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
-    @GetMapping
-    public String mostrarConfiguracion(Model model, Principal principal) {
-        Usuario usuario = getAuthenticatedUser();
-        model.addAttribute("usuario", usuario);
+//    @GetMapping
+//    public String mostrarConfiguracion(Model model, Principal principal) {
+//        Usuario usuario = getAuthenticatedUser();
+//        model.addAttribute("usuario", usuario);
+//
+//        // Foto de Google
+//        model.addAttribute("fotoGoogle", usuario.getFotoUrl());
+//
+//        // Foto local en base64
+//        if (usuario.getFotoPerfil() != null) {
+//            String fotoBase64 = Base64.getEncoder().encodeToString(usuario.getFotoPerfil());
+//            model.addAttribute("fotoBase64", fotoBase64);
+//        } else {
+//            model.addAttribute("fotoBase64", null);
+//        }
+//
+//        return "configuracion";
+//    }
+@GetMapping
+public String mostrarConfiguracion(Model model, Principal principal) {
+    Usuario usuario = getAuthenticatedUser();
+    model.addAttribute("usuario", usuario);
 
-        // Foto de Google
-        model.addAttribute("fotoGoogle", usuario.getFotoUrl());
+    String fotoPerfilNavbar = null;
 
-        // Foto local en base64
-        if (usuario.getFotoPerfil() != null) {
-            String fotoBase64 = Base64.getEncoder().encodeToString(usuario.getFotoPerfil());
-            model.addAttribute("fotoBase64", fotoBase64);
-        } else {
-            model.addAttribute("fotoBase64", null);
-        }
-
-        return "configuracion";
+    if (usuario.getFotoPerfil() != null) {
+        // Imagen local convertida a Base64
+        String fotoBase64 = Base64.getEncoder().encodeToString(usuario.getFotoPerfil());
+        fotoPerfilNavbar = "data:image/png;base64," + fotoBase64;
+    } else if (usuario.getFotoUrl() != null && !usuario.getFotoUrl().isEmpty()) {
+        // Imagen de Google
+        fotoPerfilNavbar = usuario.getFotoUrl();
+    } else {
+        // Imagen por defecto
+        fotoPerfilNavbar = "/images/default-avatar.png";
     }
+
+    model.addAttribute("fotoPerfilNavbar", fotoPerfilNavbar);
+
+    return "configuracion";
+}
+
 
     @PostMapping("/guardar")
     public String guardarConfiguracion(

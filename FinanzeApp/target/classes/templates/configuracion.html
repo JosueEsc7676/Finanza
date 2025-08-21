@@ -583,19 +583,24 @@
                     <p class="subtitle">Personaliza tu perfil y preferencias</p>
                 </div>
                 <div class="profile-header">
-                    <div class="profile-preview">
-                        <!-- Si es Google, mostrar URL -->
-                        <img th:if="${fotoGoogle != null}" th:src="${fotoGoogle}" alt="Foto de Google"/>
+<!--                    <div class="profile-preview">-->
+<!--                        &lt;!&ndash; Si es Google, mostrar URL &ndash;&gt;-->
+<!--                        <img th:if="${fotoGoogle != null}" th:src="${fotoGoogle}" alt="Foto de Google"/>-->
 
-                        <!-- Si es local, mostrar base64 -->
-                        <img th:if="${fotoGoogle == null and fotoBase64 != null}"
-                             th:src="'data:image/jpeg;base64,' + ${fotoBase64}"
-                             alt="Foto de perfil"/>
+<!--                        &lt;!&ndash; Si es local, mostrar base64 &ndash;&gt;-->
+<!--                        <img th:if="${fotoGoogle == null and fotoBase64 != null}"-->
+<!--                             th:src="'data:image/jpeg;base64,' + ${fotoBase64}"-->
+<!--                             alt="Foto de perfil"/>-->
 
-                        <!-- Si no tiene nada, usar avatar por defecto -->
-                        <img th:if="${fotoGoogle == null and fotoBase64 == null}"
-                             src="/images/default-avatar.png" alt="Sin foto"/>
-                    </div>
+<!--                        &lt;!&ndash; Si no tiene nada, usar avatar por defecto &ndash;&gt;-->
+<!--                        <img th:if="${fotoGoogle == null and fotoBase64 == null}"-->
+<!--                             src="/images/default-avatar.png" alt="Sin foto"/>-->
+<!--                    </div>-->
+
+                        <div class="profile-preview">
+                            <img th:src="${fotoPerfilNavbar}" alt="Foto de perfil"/>
+                        </div>
+
 
                 </div>
             </div>
