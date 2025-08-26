@@ -3,10 +3,9 @@ package Com.Finanzas.FinanzeApp.controladores;
 import Com.Finanzas.FinanzeApp.modelos.Movimiento;
 import Com.Finanzas.FinanzeApp.modelos.Usuario;
 import Com.Finanzas.FinanzeApp.modelos.Categoria;
-import Com.Finanzas.FinanzeApp.repositorios.MovimientoRepository;
 import Com.Finanzas.FinanzeApp.repositorios.CategoriaRepository;
 import Com.Finanzas.FinanzeApp.repositorios.UsuarioRepositorio;
-
+import Com.Finanzas.FinanzeApp.servicios.interfaces.MovimientoService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,14 +21,14 @@ import java.util.Optional;
 @RequestMapping("/movimientos")
 public class MovimientoController {
 
-    private final MovimientoRepository movimientoRepository;
+    private final MovimientoService movimientoService;
     private final CategoriaRepository categoriaRepository;
     private final UsuarioRepositorio usuarioRepository;
 
-    public MovimientoController(MovimientoRepository movimientoRepository,
+    public MovimientoController(MovimientoService movimientoService,
                                 CategoriaRepository categoriaRepository,
                                 UsuarioRepositorio usuarioRepository) {
-        this.movimientoRepository = movimientoRepository;
+        this.movimientoService = movimientoService;
         this.categoriaRepository = categoriaRepository;
         this.usuarioRepository = usuarioRepository;
     }
@@ -44,18 +43,13 @@ public class MovimientoController {
         Usuario usuario = getUsuarioAutenticado();
         if (usuario == null) return "redirect:/login";
 
-        List<Movimiento> movimientos = movimientoRepository.findByUsuarioId(usuario.getId());
+        List<Movimiento> movimientos = usuario.getMovimientos(); // usando relación en vez del repo
 
-        // Repo actualizado devuelve Double
-        Double ingresos = movimientoRepository.totalIngresos(usuario.getId());
-        Double egresos = movimientoRepository.totalEgresos(usuario.getId());
-
-        // Por seguridad ante posibles null en implementaciones antiguas
-        if (ingresos == null) ingresos = 0.0;
-        if (egresos == null) egresos = 0.0;
+        Double ingresos = movimientoService.obtenerTotalIngresos(usuario.getId());
+        Double egresos = movimientoService.obtenerTotalEgresos(usuario.getId());
 
         model.addAttribute("movimientos", movimientos);
-        model.addAttribute("totalIngresos", ingresos); // En Thymeleaf puedes formatear con #numbers
+        model.addAttribute("totalIngresos", ingresos);
         model.addAttribute("totalEgresos", egresos);
 
         return "movimientos";
@@ -68,7 +62,7 @@ public class MovimientoController {
 
         model.addAttribute("movimiento", new Movimiento());
         model.addAttribute("categorias", categoriaRepository.findByUsuarioId(usuario.getId()));
-        model.addAttribute("movimientos", movimientoRepository.findByUsuarioId(usuario.getId()));
+        model.addAttribute("movimientos", usuario.getMovimientos());
         model.addAttribute("modoOscuro", Boolean.TRUE.equals(usuario.getModoOscuro()));
 
         return "new_movimiento";
@@ -104,11 +98,15 @@ public class MovimientoController {
             if (movimiento.getTipo() == null || movimiento.getTipo().isEmpty()) {
                 movimiento.setTipo(categoria.getTipo());
             }
+
+            // ✅ ahora dispara toda la lógica de metas y notificaciones
+            movimientoService.guardarMovimiento(movimiento);
+
         } else {
             return "redirect:/movimientos/nuevo?error=categoria";
         }
 
-        movimientoRepository.save(movimiento);
         return "redirect:/inicio";
     }
+
 }

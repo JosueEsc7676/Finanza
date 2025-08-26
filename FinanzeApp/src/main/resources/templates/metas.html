@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Metas - FinanzeApp</title>
+    <style>
+        :root {
+            --success-gradient: linear-gradient(135deg, #10b981, #059669);
+            --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+            --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+            --info-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+            --pending-gradient: linear-gradient(135deg, #64748b, #475569);
+            --progress-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+            --completed-gradient: linear-gradient(135deg, #10b981, #059669);
+            --expired-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+            --hover-transform: translateY(-4px) scale(1.02);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-effect: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --card-gradient: linear-gradient(135deg, rgb(255 255 255 / 95%) 0%, rgb(255 255 255 / 80%) 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --text-primary: #FFFFFF;
+            --text-secondary: #888888;
+            --text-muted: #666666;
+            --border-color: #1a1a1a;
+            --card-bg: rgba(0, 0, 0, 0.95);
+            --card-gradient: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.8) 100%);
+            --glass-effect: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 15% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .header-content {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 30px 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .header-content:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .container > h1 {
+            font-size: 2.2rem;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.2); }
+        }
+
+        .resumen {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .resumen .card {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px 25px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resumen .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .resumen .card:hover::before {
+            left: 100%;
+        }
+
+        .resumen .card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .resumen .card:nth-child(1) { animation-delay: 0.1s; }
+        .resumen .card:nth-child(2) { animation-delay: 0.2s; }
+        .resumen .card:nth-child(3) { animation-delay: 0.3s; }
+        .resumen .card:nth-child(4) { animation-delay: 0.4s; }
+
+        .resumen .card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .resumen .card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .resumen .card h3.pendiente {
+            color: #64748b;
+        }
+
+        .resumen .card h3.pendiente::after {
+            background: var(--pending-gradient);
+        }
+
+        .resumen .card h3.progreso {
+            color: #3b82f6;
+        }
+
+        .resumen .card h3.progreso::after {
+            background: var(--progress-gradient);
+        }
+
+        .resumen .card h3.completada {
+            color: #10b981;
+        }
+
+        .resumen .card h3.completada::after {
+            background: var(--completed-gradient);
+        }
+
+        .resumen .card h3.vencida {
+            color: #ef4444;
+        }
+
+        .resumen .card h3.vencida::after {
+            background: var(--expired-gradient);
+        }
+
+        .resumen .card p {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .meta-form {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 35px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            animation: slideInUp 0.8s ease-out;
+            animation-delay: 0.5s;
+            animation-fill-mode: both;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .meta-form:hover {
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        .meta-form input,
+        .meta-form select {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .meta-form input:hover,
+        .meta-form select:hover {
+            transform: translateY(-2px);
+            border-color: #4299e1;
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.15);
+        }
+
+        .meta-form input:focus,
+        .meta-form select:focus {
+            border-color: #4299e1;
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.1), 0 10px 30px rgba(66, 153, 225, 0.2);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .meta-form input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .meta-form button {
+            background: linear-gradient(135deg, #4299e1 0%, #38b2ac 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+        }
+
+        .meta-form button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .meta-form button:hover::before {
+            left: 100%;
+        }
+
+        .meta-form button:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(66, 153, 225, 0.4);
+            background: linear-gradient(135deg, #38b2ac 0%, #4299e1 100%);
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+            animation-delay: 0.7s;
+            animation-fill-mode: both;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .table-container:hover {
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            padding: 20px 25px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #4299e1, #38b2ac);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(66, 153, 225, 0.05);
+            transform: translateX(5px);
+        }
+
+        td {
+            padding: 20px 25px;
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: #4299e1;
+        }
+
+        .progress-container {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4299e1, #38b2ac);
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s ease-in-out infinite;
+        }
+
+        @keyframes progressShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .acciones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .acciones a {
+            padding: 8px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .acciones a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .acciones a:hover::before {
+            left: 100%;
+        }
+
+        .acciones a:nth-child(1) {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .acciones a:nth-child(1):hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .acciones a:nth-child(2) {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .acciones a:nth-child(2):hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .acciones a:nth-child(3) {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .acciones a:nth-child(3):hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .container > h1 {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+
+            .resumen {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .resumen .card {
+                padding: 25px 20px;
+            }
+
+            .resumen .card p {
+                font-size: 2rem;
+            }
+
+            .meta-form {
+                grid-template-columns: 1fr;
+                padding: 25px;
+                gap: 15px;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 800px;
+            }
+
+            th, td {
+                padding: 15px 20px;
+                font-size: 0.9rem;
+            }
+
+            .acciones {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .acciones a {
+                text-align: center;
+                padding: 10px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .container > h1 {
+                font-size: 1.6rem;
+            }
+
+            .resumen {
+                grid-template-columns: 1fr;
+            }
+
+            .meta-form {
+                padding: 20px;
+            }
+
+            .meta-form input,
+            .meta-form select,
+            .meta-form button {
+                padding: 14px 16px;
+                font-size: 0.95rem;
+            }
+
+            th, td {
+                padding: 12px 15px;
+                font-size: 0.85rem;
+            }
+
+            .progress-container {
+                height: 16px;
+            }
+
+            .progress-bar {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+<main layout:fragment="content">
+    <section>
+        <div class="container">
+            <h1>🎯 Metas Financieras</h1>
+
+            <!-- Resumen de Metas -->
+            <div class="resumen">
+                <div class="card">
+                    <h3 class="pendiente">Pendientes</h3>
+                    <p th:text="${#lists.size(metas.?[estado.name() == 'PENDIENTE'])}">0</p>
+                </div>
+                <div class="card">
+                    <h3 class="progreso">En Progreso</h3>
+                    <p th:text="${#lists.size(metas.?[estado.name() == 'EN_PROGRESO'])}">0</p>
+                </div>
+                <div class="card">
+                    <h3 class="completada">Completadas</h3>
+                    <p th:text="${#lists.size(metas.?[estado.name() == 'COMPLETADA'])}">0</p>
+                </div>
+                <div class="card">
+                    <h3 class="vencida">Vencidas</h3>
+                    <p th:text="${#lists.size(metas.?[estado.name() == 'VENCIDA'])}">0</p>
+                </div>
+            </div>
+
+            <!-- Formulario Nueva Meta -->
+            <form th:action="@{/metas/guardar}" method="post" th:object="${nuevaMeta}" class="meta-form">
+                <input type="text" th:field="*{titulo}" placeholder="Título de la meta" required>
+                <input type="number" th:field="*{montoMeta}" placeholder="Monto (ej. 5000)" required>
+                <input type="date" th:field="*{fechaLimite}" required>
+                <select th:field="*{estado}">
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="EN_PROGRESO">En Progreso</option>
+                    <option value="COMPLETADA">Completada</option>
+                    <option value="VENCIDA">Vencida</option>
+                </select>
+                <button type="submit">➕ Agregar Meta</button>
+            </form>
+
+            <!-- Tabla de Metas -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Monto Meta</th>
+                        <th>Fecha Límite</th>
+                        <th>Estado</th>
+                        <th>Progreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="meta : ${metas}">
+                        <td th:text="${meta.id}"></td>
+                        <td th:text="${meta.titulo}"></td>
+                        <td th:text="${meta.montoMeta}"></td>
+                        <td th:text="${meta.fechaLimite}"></td>
+                        <td th:text="${meta.estado}"></td>
+                        <td>
+                            <div class="progress-container">
+                                <div class="progress-bar"
+                                     th:style="'width:' + (${meta.montoActual} / ${meta.montoMeta} * 100) + '%;'"
+                                     th:text="(${meta.montoActual} / ${meta.montoMeta} * 100) + '%'">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="acciones">
+                            <a th:href="@{/metas/{id}/detalles(id=${meta.id})}">🔍 Ver</a>
+                            <a th:href="@{/metas/editar/{id}(id=${meta.id})}">✏️ Editar</a>
+                            <a th:href="@{/metas/eliminar/{id}(id=${meta.id})}"
+                               onclick="return confirm('¿Seguro que deseas eliminar esta meta?')">🗑️ Eliminar</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97485de1865e1499',t:'MTc1NjA5NjM1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

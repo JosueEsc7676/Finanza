@@ -17,7 +17,7 @@ public class NotificacionService {
     private UsuarioRepositorio usuarioRepositorio;
 
     @Autowired
-    private EmailService emailService;
+    private IEmailService emailService;
 
     public String enviarRecordatoriosPrueba() {
         System.out.println("[v0] Ejecutando prueba manual de recordatorios...");
@@ -46,25 +46,23 @@ public class NotificacionService {
         return resultado;
     }
 
-    @Scheduled(cron = "0 0 9 */3 * *")
+//    @Scheduled(cron = "0 0 9 */3 * *")
+@Scheduled(cron = "0 */2 * * * ?")
     public void enviarRecordatoriosIngresosDatos() {
         System.out.println("[v0] Ejecutando recordatorios de ingreso de datos...");
 
         LocalDateTime ahora = LocalDateTime.now();
         LocalDateTime hace3Dias = ahora.minusDays(3);
 
-        // Buscar usuarios que no han recibido recordatorio en los últimos 3 días
         List<Usuario> usuarios = usuarioRepositorio.findAll();
 
         for (Usuario usuario : usuarios) {
-            // Solo enviar si las notificaciones están activas y no se ha enviado recordatorio reciente
             if (usuario.getNotificacionesActivas() != null && usuario.getNotificacionesActivas() &&
                     (usuario.getUltimoRecordatorio() == null || usuario.getUltimoRecordatorio().isBefore(hace3Dias))) {
 
                 try {
                     emailService.enviarRecordatorioIngresosDatos(usuario.getCorreo(), usuario.getNombreCompleto());
 
-                    // Actualizar fecha del último recordatorio
                     usuario.setUltimoRecordatorio(ahora);
                     usuarioRepositorio.save(usuario);
 
@@ -79,7 +77,8 @@ public class NotificacionService {
         System.out.println("[v0] Proceso de recordatorios completado.");
     }
 
-    @Scheduled(cron = "0 0 8 * * MON")
+//    @Scheduled(cron = "0 0 8 * * MON")
+@Scheduled(cron = "0 */2 * * * ?")
     public void enviarRecordatorioSemanal() {
         System.out.println("[v0] Ejecutando recordatorios semanales...");
 
@@ -98,5 +97,28 @@ public class NotificacionService {
         }
 
         System.out.println("[v0] Proceso de recordatorios semanales completado.");
+    }
+
+    // 🔔 NUEVO RECORDATORIO: Cierre de mes
+//    @Scheduled(cron = "0 0 18 L * ?")
+    @Scheduled(cron = "0 */2 * * * ?")
+    public void enviarRecordatorioCierreMes() {
+        System.out.println("[v0] Ejecutando recordatorio de cierre de mes...");
+
+        List<Usuario> usuarios = usuarioRepositorio.findAll();
+
+        for (Usuario usuario : usuarios) {
+            if (usuario.getNotificacionesActivas() != null && usuario.getNotificacionesActivas()) {
+                try {
+                    emailService.enviarRecordatorioCierreMes(usuario.getCorreo(), usuario.getNombreCompleto());
+                    System.out.println("[v0] Recordatorio de cierre de mes enviado a: " + usuario.getCorreo());
+
+                } catch (Exception e) {
+                    System.err.println("[v0] Error enviando recordatorio de cierre de mes a " + usuario.getCorreo() + ": " + e.getMessage());
+                }
+            }
+        }
+
+        System.out.println("[v0] Proceso de recordatorio de cierre de mes completado.");
     }
 }

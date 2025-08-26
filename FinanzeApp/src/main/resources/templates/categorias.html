@@ -336,6 +336,15 @@
           <option value="Ingreso">Ingreso</option>
           <option value="Egreso">Egreso</option>
         </select>
+          <label for="meta">Meta asociada (opcional)</label>
+          <select id="meta" name="metaId">
+              <option value="" th:selected="${categoria.meta == null}">-- Ninguna --</option>
+              <option th:each="meta : ${metas}"
+                      th:value="${meta.id}"
+                      th:text="${meta.titulo}"
+                      th:selected="${categoria.meta != null and categoria.meta.id == meta.id}">
+              </option>
+          </select>
 
         <button type="submit" th:text="${categoria.id != null} ? 'Actualizar' : 'Crear'">Crear</button>
       </form>

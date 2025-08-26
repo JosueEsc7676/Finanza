@@ -79,7 +79,7 @@ public class ConfiguracionController {
             @RequestParam("ocupacion") String ocupacion,
             @RequestParam("genero") String genero,
             @RequestParam("moneda") String moneda,
-            @RequestParam("notificacionesActivas") boolean notificacionesActivas,
+            @RequestParam(value = "notificacionesActivas", defaultValue = "false") boolean notificacionesActivas,
             @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil
     ) throws IOException {
 
@@ -93,16 +93,20 @@ public class ConfiguracionController {
         usuario.setOcupacion(ocupacion);
         usuario.setGenero(genero);
         usuario.setMoneda(moneda);
+
+        // ✅ Guardar preferencia de notificaciones
         usuario.setNotificacionesActivas(notificacionesActivas);
 
         if (fotoPerfil != null && !fotoPerfil.isEmpty()) {
             usuario.setFotoPerfil(fotoPerfil.getBytes());
-            usuario.setFotoUrl(null); // Si sube local, anulamos Google
+            usuario.setFotoUrl(null);
         }
 
         usuarioRepositorio.save(usuario);
         return "redirect:/configuracion?success";
     }
+
+
 
     @GetMapping("/eliminar")
     public String mostrarConfirmacionEliminar() {

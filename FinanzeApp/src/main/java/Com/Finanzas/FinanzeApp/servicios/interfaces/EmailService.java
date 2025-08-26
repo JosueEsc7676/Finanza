@@ -1,5 +1,10 @@
 package Com.Finanzas.FinanzeApp.servicios.interfaces;
 
+import Com.Finanzas.FinanzeApp.modelos.Meta;
+import Com.Finanzas.FinanzeApp.modelos.Notificacion;
+import Com.Finanzas.FinanzeApp.modelos.Usuario;
+import Com.Finanzas.FinanzeApp.repositorios.NotificacionRepositorio;
+import Com.Finanzas.FinanzeApp.repositorios.UsuarioRepositorio;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,127 +12,141 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
-public class EmailService {
+public class EmailService implements IEmailService{
 
     @Autowired
     private JavaMailSender mailSender;
 
-    // ✅ Recuperación de contraseña
+    @Autowired
+    private NotificacionRepositorio notificacionRepositorio;
+
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+
+    // Guardar notificación en BD
+    public void registrarNotificacion(String correo, Meta meta, String asunto, String mensaje) {
+        Usuario usuario = usuarioRepositorio.findByCorreo(correo).orElse(null);
+        if (usuario == null) return;
+
+        Notificacion noti = new Notificacion();
+        noti.setUsuario(usuario);
+        noti.setCorreo(correo);
+        if (meta != null) noti.setMeta(meta);
+        noti.setAsunto(asunto);
+        noti.setMensaje(mensaje);
+        noti.setFechaEnvio(LocalDateTime.now());
+        notificacionRepositorio.save(noti);
+    }
+
+    // Recuperación de contraseña
     public void enviarCorreoRecuperacion(String to, String link) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+        String contenido = "Haz clic en el siguiente enlace para restablecer tu contraseña:\n" + link;
 
-        helper.setTo(to);
-        helper.setSubject("Recuperación de contraseña - FinanzeApp");
-        helper.setText("<p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>" +
-                "<a href=\"" + link + "\">Recuperar Contraseña</a>", true);
-
-        mailSender.send(mensaje);
+        enviarCorreo(to, "Recuperación de contraseña - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Recuperación de contraseña - FinanzeApp", contenido);
     }
 
-    // ✅ (1) Confirmación de cuenta
+    // Confirmación de cuenta
     public void enviarCorreoConfirmacionCuenta(String to, String nombre, String link) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+        String contenido = "Hola " + nombre + ",\nGracias por registrarte en FinanzeApp.\n" +
+                "Confirma tu cuenta aquí: " + link;
 
-        helper.setTo(to);
-        helper.setSubject("Confirma tu cuenta - FinanzeApp");
-        helper.setText("<p>Hola " + nombre + ",</p>" +
-                "<p>Gracias por registrarte en FinanzeApp. Haz clic en el siguiente enlace para activar tu cuenta:</p>" +
-                "<a href=\"" + link + "\">Confirmar Cuenta</a>", true);
-
-        mailSender.send(mensaje);
+        enviarCorreo(to, "Confirma tu cuenta - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Confirma tu cuenta - FinanzeApp", contenido);
     }
 
-    // ✅ (3) Notificación de seguridad
+    // Notificación de seguridad
     public void enviarNotificacionSeguridad(String to, String ip, String fecha) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+        String contenido = "Detectamos un intento de inicio de sesión sospechoso.\n" +
+                "IP: " + ip + "\nFecha: " + fecha + "\n" +
+                "Si no fuiste tú, cambia tu contraseña inmediatamente.";
 
-        helper.setTo(to);
-        helper.setSubject("Alerta de seguridad - FinanzeApp");
-        helper.setText("<p>Detectamos un intento de inicio de sesión sospechoso.</p>" +
-                "<p><b>IP:</b> " + ip + "</p>" +
-                "<p><b>Fecha:</b> " + fecha + "</p>" +
-                "<p>Si no fuiste tú, por favor cambia tu contraseña inmediatamente.</p>", true);
-
-        mailSender.send(mensaje);
+        enviarCorreo(to, "Alerta de seguridad - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Alerta de seguridad - FinanzeApp", contenido);
     }
 
-    // ✅ (4) Confirmación de transacción
+    // Confirmación de transacción
     public void enviarConfirmacionTransaccion(String to, String detalle, String monto) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+        String contenido = "Tu transacción ha sido procesada exitosamente.\n" +
+                "Detalle: " + detalle + "\nMonto: $" + monto;
 
-        helper.setTo(to);
-        helper.setSubject("Confirmación de transacción - FinanzeApp");
-        helper.setText("<p>Tu transacción ha sido procesada exitosamente.</p>" +
-                "<p><b>Detalle:</b> " + detalle + "</p>" +
-                "<p><b>Monto:</b> $" + monto + "</p>", true);
-
-        mailSender.send(mensaje);
+        enviarCorreo(to, "Confirmación de transacción - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Confirmación de transacción - FinanzeApp", contenido);
     }
 
-    // ✅ (6) Reporte mensual
+    // Reporte mensual
     public void enviarReporteMensual(String to, String resumen) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+        String contenido = "Resumen de tu actividad financiera:\n" + resumen;
 
-        helper.setTo(to);
-        helper.setSubject("Reporte mensual de tus finanzas - FinanzeApp");
-        helper.setText("<h3>Resumen de tu actividad financiera:</h3>" +
-                "<p>" + resumen + "</p>", true);
-
-        mailSender.send(mensaje);
+        enviarCorreo(to, "Reporte mensual de tus finanzas - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Reporte mensual de tus finanzas - FinanzeApp", contenido);
     }
 
-    // ✅ (7) Aviso de pago próximo
+    // Aviso de pago próximo
     public void enviarAvisoPagoProximo(String to, String concepto, String fecha, String monto) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+        String contenido = "Tienes un pago próximo:\nConcepto: " + concepto +
+                "\nFecha límite: " + fecha + "\nMonto: $" + monto;
 
-        helper.setTo(to);
-        helper.setSubject("Recordatorio de pago próximo - FinanzeApp");
-        helper.setText("<p>Tienes un pago próximo:</p>" +
-                "<p><b>Concepto:</b> " + concepto + "</p>" +
-                "<p><b>Fecha límite:</b> " + fecha + "</p>" +
-                "<p><b>Monto:</b> $" + monto + "</p>", true);
-
-        mailSender.send(mensaje);
+        enviarCorreo(to, "Recordatorio de pago próximo - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Recordatorio de pago próximo - FinanzeApp", contenido);
     }
 
-    // ✅ (8) Boletín de noticias / tips financieros
+    // Boletín financiero
     public void enviarBoletinFinanciero(String to, String contenido) throws MessagingException {
-        MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
+        String texto = "Consejos y noticias financieras:\n" + contenido;
 
-        helper.setTo(to);
-        helper.setSubject("Boletín financiero - FinanzeApp");
-        helper.setText("<h2>Consejos y noticias financieras</h2>" +
-                "<p>" + contenido + "</p>", true);
-
-        mailSender.send(mensaje);
+        enviarCorreo(to, "Boletín financiero - FinanzeApp", texto);
+        registrarNotificacion(to, null, "Boletín financiero - FinanzeApp", texto);
     }
-    // ✅ (9) Recordatorio de ingreso de datos
+
+    // Recordatorio de ingreso de datos
     public void enviarRecordatorioIngresosDatos(String to, String nombre) throws MessagingException {
+        String contenido = "Hola " + nombre + ",\n" +
+                "No olvides mantener tus finanzas al día. Ingresa tus últimos movimientos financieros.\n" +
+                "Esto te ayudará a:\n- Controlar mejor tus gastos\n- Identificar patrones de consumo\n- Alcanzar tus metas";
+
+        enviarCorreo(to, "Recordatorio: Actualiza tus finanzas - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Recordatorio: Actualiza tus finanzas - FinanzeApp", contenido);
+    }
+
+    // Meta completada
+    public void enviarNotificacionMetaCompletada(String to, Meta meta) throws MessagingException {
+        String contenido = "¡Felicidades!\nHas completado tu meta: " + meta.getTitulo();
+
+        enviarCorreo(to, "Meta completada - FinanzeApp", contenido);
+        registrarNotificacion(to, meta, "Meta completada", contenido);
+    }
+
+    // Recordatorio de meta
+    public void enviarRecordatorioMeta(String to, Meta meta, String diasRestantes) throws MessagingException {
+        String contenido = "Tu meta '" + meta.getTitulo() + "' vence en " + diasRestantes + " días.\n" +
+                "No olvides registrar tus avances.";
+
+        enviarCorreo(to, "Recordatorio de meta - FinanzeApp", contenido);
+        registrarNotificacion(to, meta, "Recordatorio de meta", contenido);
+    }
+
+    // 🔹 Método auxiliar para enviar correos en texto plano
+    private void enviarCorreo(String to, String asunto, String contenido) throws MessagingException {
         MimeMessage mensaje = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true);
-
+        MimeMessageHelper helper = new MimeMessageHelper(mensaje, false); // false = texto plano
         helper.setTo(to);
-        helper.setSubject("Recordatorio: Actualiza tus finanzas - FinanzeApp");
-        helper.setText("<p>Hola " + nombre + ",</p>" +
-                "<p>¡No olvides mantener tus finanzas al día! Te recordamos que ingreses tus últimos movimientos financieros.</p>" +
-                "<p>Mantener un registro actualizado te ayudará a:</p>" +
-                "<ul>" +
-                "<li>Controlar mejor tus gastos</li>" +
-                "<li>Identificar patrones de consumo</li>" +
-                "<li>Alcanzar tus metas financieras</li>" +
-                "</ul>" +
-                "<p><a href=\"https://finanzeapp.pagekite.me/new_movimiento\" style=\"background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;\">Ingresar Movimientos</a></p>" +
-                "<p>¡Gracias por usar FinanzeApp!</p>", true);
-
+        helper.setSubject(asunto);
+        helper.setText(contenido, false);
         mailSender.send(mensaje);
     }
-}
+    // Recordatorio de cierre de mes
+    public void enviarRecordatorioCierreMes(String to, String nombre) throws MessagingException {
+        String contenido = "Hola " + nombre + ",\n" +
+                "Estamos por cerrar el mes. Es un buen momento para revisar tus ingresos, egresos " +
+                "y actualizar tus movimientos financieros.\n" +
+                "Esto te ayudará a tener un mejor control y generar tu reporte mensual.";
 
+        enviarCorreo(to, "Recordatorio: Cierre de mes - FinanzeApp", contenido);
+        registrarNotificacion(to, null, "Recordatorio: Cierre de mes - FinanzeApp", contenido);
+    }
+
+}

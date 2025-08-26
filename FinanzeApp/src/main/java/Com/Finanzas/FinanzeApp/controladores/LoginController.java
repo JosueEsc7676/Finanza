@@ -1,6 +1,5 @@
 package Com.Finanzas.FinanzeApp.controladores;
 
-import Com.Finanzas.FinanzeApp.modelos.Movimiento;
 import Com.Finanzas.FinanzeApp.modelos.Usuario;
 import Com.Finanzas.FinanzeApp.repositorios.MovimientoRepository;
 import Com.Finanzas.FinanzeApp.repositorios.UsuarioRepositorio;
@@ -39,91 +38,7 @@ public class LoginController {
         return "Login";
     }
 
-//    @GetMapping("/inicio")
-//    public String mostrarInicio(Model model) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        String correo = auth.getName();
-//
-//        Usuario usuario = usuarioRepositorio.findByCorreo(correo).orElse(null);
-//
-//        if (usuario != null) {
-//            model.addAttribute("usuario", usuario);
-//
-//            Double totalIngresos = movimientoRepository.totalIngresos(usuario.getId());
-//            Double totalEgresos = movimientoRepository.totalEgresos(usuario.getId());
-//
-//            totalIngresos = totalIngresos != null ? totalIngresos : 0.0;
-//            totalEgresos = totalEgresos != null ? totalEgresos : 0.0;
-//            double balance = totalIngresos - totalEgresos;
-//
-//            model.addAttribute("totalIngresos", totalIngresos);
-//            model.addAttribute("totalEgresos", totalEgresos);
-//            model.addAttribute("balance", balance);
-//
-//            // Agregar los movimientos del usuario al modelo
-//            List<Movimiento> movimientosRecientes = movimientoRepository
-//                    .findTop4ByUsuarioIdOrderByFechaDesc(usuario.getId());
-//            model.addAttribute("movimientos", movimientosRecientes);
-//
-//            // ✅ Se pasa el valor al layout
-//            model.addAttribute("modoOscuro", Boolean.TRUE.equals(usuario.getModoOscuro()));
-//        } else {
-//            return "redirect:/login";
-//        }
-//
-//        return "inicio";
-//    }
 
-//    @GetMapping("/inicio")
-//    public String mostrarInicio(Model model, Authentication authentication) {
-//        String correo = null;
-//
-//        if (authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User) {
-//            // 🟢 Usuario de tu BD (login con correo y contraseña)
-//            correo = authentication.getName();
-//
-//        } else if (authentication instanceof OAuth2AuthenticationToken) {
-//            // 🔵 Usuario de Google
-//            var attributes = ((OAuth2AuthenticationToken) authentication).getPrincipal().getAttributes();
-//            correo = (String) attributes.get("email");
-//
-//            // 👉 Crear usuario en BD si no existe (sin usar lambda)
-//            Usuario usuarioExistente = usuarioRepositorio.findByCorreo(correo).orElse(null);
-//            if (usuarioExistente == null) {
-//                Usuario nuevo = new Usuario();
-//                nuevo.setCorreo(correo);
-//                nuevo.setNombreCompleto((String) attributes.get("name")); // usa tu campo nombreCompleto
-//                nuevo.setFotoPerfil(null); // más adelante puedes mapear la foto de Google aquí
-//                usuarioRepositorio.save(nuevo);
-//            }
-//        }
-//
-//        // --- lógica principal ---
-//        Usuario usuario = usuarioRepositorio.findByCorreo(correo).orElse(null);
-//        if (usuario == null) {
-//            return "redirect:/login";
-//        }
-//
-//        model.addAttribute("usuario", usuario);
-//
-//        Double totalIngresos = movimientoRepository.totalIngresos(usuario.getId());
-//        Double totalEgresos = movimientoRepository.totalEgresos(usuario.getId());
-//
-//        totalIngresos = totalIngresos != null ? totalIngresos : 0.0;
-//        totalEgresos = totalEgresos != null ? totalEgresos : 0.0;
-//        double balance = totalIngresos - totalEgresos;
-//
-//        model.addAttribute("totalIngresos", totalIngresos);
-//        model.addAttribute("totalEgresos", totalEgresos);
-//        model.addAttribute("balance", balance);
-//
-//        model.addAttribute("movimientos",
-//                movimientoRepository.findTop4ByUsuarioIdOrderByFechaDesc(usuario.getId()));
-//
-//        model.addAttribute("modoOscuro", Boolean.TRUE.equals(usuario.getModoOscuro()));
-//
-//        return "inicio";
-//    }
 
     @GetMapping("/inicio")
     public String mostrarInicio(Model model,
@@ -163,13 +78,7 @@ public class LoginController {
         // ✅ Usuario al modelo
         model.addAttribute("usuario", usuario);
 
-        // ✅ Foto de perfil
-        if ("GOOGLE".equals(usuario.getProveedor()) && usuario.getFotoUrl() != null) {
-            model.addAttribute("fotoGoogle", usuario.getFotoUrl());
-        } else if (usuario.getFotoPerfil() != null) {
-            model.addAttribute("fotoBase64",
-                    Base64.getEncoder().encodeToString(usuario.getFotoPerfil()));
-        }
+
 
         // ✅ Movimientos y balance
         Double totalIngresos = movimientoRepository.totalIngresos(usuario.getId());

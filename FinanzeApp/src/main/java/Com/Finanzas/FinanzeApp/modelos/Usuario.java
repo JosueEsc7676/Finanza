@@ -58,4 +58,7 @@ public class Usuario {
     private Boolean notificacionesActivas=true;
     @Column(name = "ultimo_recordatorio")
     private java.time.LocalDateTime ultimoRecordatorio;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Meta> metas;
+
 }

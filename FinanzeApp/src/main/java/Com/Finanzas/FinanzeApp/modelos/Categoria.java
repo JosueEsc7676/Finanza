@@ -4,7 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Categoria {
 
@@ -24,46 +32,10 @@ public class Categoria {
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Movimiento> movimientos;
-
+    // 🔹 Relación opcional con Meta
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meta_id", nullable = true)
+    private Meta meta;
     // --- Getters y Setters ---
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public List<Movimiento> getMovimientos() {
-        return movimientos;
-    }
-
-    public void setMovimientos(List<Movimiento> movimientos) {
-        this.movimientos = movimientos;
-    }
 }

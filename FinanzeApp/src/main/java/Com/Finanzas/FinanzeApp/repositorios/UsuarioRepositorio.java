@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByCorreo(String correo);
  //buscar por token
+
     Optional<Usuario> findByTokenRecuperacion(String tokenRecuperacion);
 }
 

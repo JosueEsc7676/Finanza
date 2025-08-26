@@ -1,6 +1,7 @@
 package Com.Finanzas.FinanzeApp.controladores;
 
 import Com.Finanzas.FinanzeApp.modelos.Categoria;
+import Com.Finanzas.FinanzeApp.modelos.Meta;
 import Com.Finanzas.FinanzeApp.modelos.Usuario;
 import Com.Finanzas.FinanzeApp.repositorios.CategoriaRepository;
 import Com.Finanzas.FinanzeApp.repositorios.UsuarioRepositorio;
@@ -40,7 +41,7 @@ public class CategoriaController {
 
         model.addAttribute("categorias", categoriaRepository.findByUsuarioId(usuario.getId()));
 
-        Categoria categoria = new Categoria(); // default (crear)
+        Categoria categoria = new Categoria();
         if (editId != null) {
             Optional<Categoria> editable = categoriaRepository.findById(editId);
             if (editable.isPresent() && editable.get().getUsuario().getId().equals(usuario.getId())) {
@@ -49,19 +50,32 @@ public class CategoriaController {
         }
 
         model.addAttribute("categoria", categoria);
+
+        // 🔹 Agregar metas disponibles del usuario
+        model.addAttribute("metas", usuario.getMetas());
+
         return "categorias";
     }
 
+
     // GUARDAR NUEVA
     @PostMapping("/nueva")
-    public String guardarCategoria(@ModelAttribute Categoria categoria) {
+    public String guardarCategoria(@ModelAttribute Categoria categoria, @RequestParam(required = false) Long metaId) {
         Usuario usuario = getUsuarioAutenticado();
         if (usuario == null) return "redirect:/login";
 
         categoria.setUsuario(usuario);
+
+        if (metaId != null) {
+            Optional<Meta> meta = usuario.getMetas().stream().filter(m -> m.getId().equals(metaId)).findFirst();
+            meta.ifPresent(categoria::setMeta);
+        }
+
         categoriaRepository.save(categoria);
         return "redirect:/categorias";
     }
+
+
 
     // FORMULARIO EDITAR
     @GetMapping("/editar/{id}")
