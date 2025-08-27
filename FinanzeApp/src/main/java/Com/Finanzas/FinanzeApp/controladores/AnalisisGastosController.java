@@ -53,7 +53,7 @@ public class AnalisisGastosController {
         List<TopGastoDTO> top5 = analisisService.obtenerTopGastos(usuarioId, desde, hasta, 5);
         List<PresupuestoEstadoDTO> presupuestos = analisisService.obtenerEstadoPresupuestos(usuarioId, desde, hasta);
 
-        // Para Chart.js
+        // Para .js
         List<String> categorias = analisis.stream()
                 .map(GastoCategoriaDTO::getCategoria)
                 .toList();
