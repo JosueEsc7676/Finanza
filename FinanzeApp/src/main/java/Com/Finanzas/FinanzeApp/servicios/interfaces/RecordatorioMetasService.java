@@ -23,7 +23,9 @@ public class RecordatorioMetasService {
     }
 
     // 🔹 Se ejecuta cada 2 minutos
-    @Scheduled(cron = "0 */2 * * * ?")
+//    @Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 0 8 * * MON")
+
     public void enviarRecordatorios() {
         List<Meta> metas = metaRepo.findAllWithUsuario(); // 🔹 Ya carga el usuario
 

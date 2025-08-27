@@ -1,533 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="es"-->
-<!--      xmlns:th="http://www.thymeleaf.org"-->
-<!--      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
-<!--      layout:decorate="~{layout}" th:attr="data-theme=${modoOscuro ? 'dark' : 'light'}">-->
-<!--<head>-->
-<!--    <title layout:fragment="title">Gestión de Movimientos</title>-->
-<!--    <style>-->
-<!--        /* Actualizando estilos para que coincidan con el diseño de categorías */-->
-<!--        :root {-->
-<!--           &#45;&#45;card-bg: rgba(255, 255, 255, 0.8);-->
-<!--           &#45;&#45;header-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);-->
-<!--           &#45;&#45;scrollbar-thumb: rgba(59, 130, 246, 0.5);-->
-<!--           &#45;&#45;scrollbar-thumb-hover: rgba(59, 130, 246, 0.7);-->
-<!--           &#45;&#45;bg-primary: #ffffff;-->
-<!--           &#45;&#45;bg-secondary: #f0f0f0;-->
-<!--           &#45;&#45;text-primary: #1e293b;-->
-<!--           &#45;&#45;text-secondary: #475569;-->
-<!--           &#45;&#45;border-color: #cbd5e1;-->
-<!--           &#45;&#45;primary-color: #3b82f6;-->
-<!--           &#45;&#45;success-color: #22c55e;-->
-<!--           &#45;&#45;danger-color: #ef4444;-->
-<!--           &#45;&#45;shadow: 0 2px 4px rgb(0 0 0 / 10%);-->
-<!--           &#45;&#45;shadow-lg: 0 10px 15px rgb(255 255 255 / 10%);-->
-<!--       }-->
-
-<!--      [data-theme="dark"] {-->
-<!--           &#45;&#45;card-bg: rgba(30, 41, 59, 0.8);-->
-<!--           &#45;&#45;header-gradient: linear-gradient(135deg, #2563eb, #4f46e5);-->
-<!--           &#45;&#45;scrollbar-thumb: rgba(38, 78, 160, 0.5);-->
-<!--           &#45;&#45;scrollbar-thumb-hover: rgba(38, 78, 160, 0.7);-->
-<!--           &#45;&#45;bg-primary: #0d0c0c;-->
-<!--           &#45;&#45;bg-secondary: #1e293b;-->
-<!--           &#45;&#45;text-primary: #f1f5f9;-->
-<!--           &#45;&#45;text-secondary: #94a3b8;-->
-<!--           &#45;&#45;border-color: #334155;-->
-<!--           &#45;&#45;primary-color: #60a5fa;-->
-<!--           &#45;&#45;success-color: #4ade80;-->
-<!--           &#45;&#45;danger-color: #f87171;-->
-<!--       }-->
-
-<!--       body.dark-mode {-->
-<!--           &#45;&#45;card-bg: rgba(30, 41, 59, 0.8);-->
-<!--           &#45;&#45;header-gradient: linear-gradient(135deg, #2563eb, #4f46e5);-->
-<!--           &#45;&#45;scrollbar-thumb: rgba(38, 78, 160, 0.5);-->
-<!--           &#45;&#45;scrollbar-thumb-hover: rgba(38, 78, 160, 0.7);-->
-<!--           &#45;&#45;bg-primary: #0f172a;-->
-<!--           &#45;&#45;bg-secondary: #1e293b;-->
-<!--           &#45;&#45;text-primary: #f1f5f9;-->
-<!--           &#45;&#45;text-secondary: #94a3b8;-->
-<!--           &#45;&#45;border-color: #334155;-->
-<!--           &#45;&#45;primary-color: #60a5fa;-->
-<!--           &#45;&#45;success-color: #4ade80;-->
-<!--           &#45;&#45;danger-color: #f87171;-->
-<!--       }-->
-
-<!--       body {-->
-<!--           background-color: var(&#45;&#45;bg-primary);-->
-<!--           color: var(&#45;&#45;text-primary);-->
-<!--           transition: background-color 0.3s, color 0.3s;-->
-<!--       }-->
-
-<!--       /* Nuevo título principal con estilo de categorías */-->
-<!--       .titulo {-->
-<!--           text-align: center;-->
-<!--           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;-->
-<!--           font-size: 2.5rem;-->
-<!--           font-weight: 700;-->
-<!--           margin-bottom: 2rem;-->
-<!--           color: var(&#45;&#45;text-primary);-->
-<!--           background: linear-gradient(135deg, #3b82f6, #8b5cf6);-->
-<!--           -webkit-background-clip: text;-->
-<!--           -webkit-text-fill-color: transparent;-->
-<!--           background-clip: text;-->
-<!--           text-shadow: 0 2px 4px rgba(0,0,0,0.1);-->
-<!--           position: relative;-->
-<!--       }-->
-
-<!--       .titulo::after {-->
-<!--           content: '';-->
-<!--           position: absolute;-->
-<!--           bottom: -10px;-->
-<!--           left: 50%;-->
-<!--           transform: translateX(-50%);-->
-<!--           width: 80px;-->
-<!--           height: 4px;-->
-<!--           background: linear-gradient(135deg, #3b82f6, #8b5cf6);-->
-<!--           border-radius: 2px;-->
-<!--       }-->
-
-<!--       /* Nuevo contenedor flex similar al de categorías */-->
-<!--       .contenedor-flex {-->
-<!--           display: flex;-->
-<!--           justify-content: center;-->
-<!--           gap: 2rem;-->
-<!--           flex-wrap: wrap;-->
-<!--           padding: 2rem 1rem;-->
-<!--           max-width: 1400px;-->
-<!--           margin: 0 auto;-->
-<!--       }-->
-
-<!--       /* Cards con el mismo estilo que categorías */-->
-<!--       .card {-->
-<!--           background: var(&#45;&#45;bg-primary);-->
-<!--           padding: 2rem;-->
-<!--           border-radius: 16px;-->
-<!--           box-shadow: var(&#45;&#45;shadow);-->
-<!--           width: 100%;-->
-<!--           max-width: 450px;-->
-<!--           border: 1px solid var(&#45;&#45;border-color);-->
-<!--           transition: all 0.3s ease;-->
-<!--           position: relative;-->
-<!--           overflow: hidden;-->
-<!--           animation: fadeInUp 0.6s ease-out;-->
-<!--       }-->
-
-<!--       .card.table-card {-->
-<!--           max-width: 650px;-->
-<!--       }-->
-
-<!--       .card::before {-->
-<!--           content: '';-->
-<!--           position: absolute;-->
-<!--           top: 0;-->
-<!--           left: 0;-->
-<!--           right: 0;-->
-<!--           height: 4px;-->
-<!--           background: linear-gradient(135deg, #3b82f6, #8b5cf6);-->
-<!--       }-->
-
-<!--       .card:hover {-->
-<!--           transform: translateY(-5px);-->
-<!--           box-shadow: var(&#45;&#45;shadow-lg);-->
-<!--       }-->
-
-<!--       .card:nth-child(2) {-->
-<!--           animation-delay: 0.1s;-->
-<!--       }-->
-
-<!--       h3 {-->
-<!--           margin-top: 0;-->
-<!--           font-size: 1.5rem;-->
-<!--           font-weight: 600;-->
-<!--           margin-bottom: 1.5rem;-->
-<!--           color: var(&#45;&#45;text-primary);-->
-<!--           display: flex;-->
-<!--           align-items: center;-->
-<!--           gap: 0.5rem;-->
-<!--       }-->
-
-<!--       h3::before {-->
-<!--           content: '💰';-->
-<!--           font-size: 1.2rem;-->
-<!--       }-->
-
-<!--       label {-->
-<!--           display: block;-->
-<!--           margin-bottom: 0.5rem;-->
-<!--           font-weight: 600;-->
-<!--           color: var(&#45;&#45;text-secondary);-->
-<!--           font-size: 0.9rem;-->
-<!--           text-transform: uppercase;-->
-<!--           letter-spacing: 0.5px;-->
-<!--       }-->
-
-<!--       input, select {-->
-<!--           width: 100%;-->
-<!--           padding: 0.8rem 1rem;-->
-<!--           margin-bottom: 1.5rem;-->
-<!--           border-radius: 12px;-->
-<!--           border: 2px solid var(&#45;&#45;border-color);-->
-<!--           background: var(&#45;&#45;bg-secondary);-->
-<!--           color: var(&#45;&#45;text-primary);-->
-<!--           font-size: 1rem;-->
-<!--           transition: all 0.3s ease;-->
-<!--           box-sizing: border-box;-->
-<!--       }-->
-
-<!--       input:focus, select:focus {-->
-<!--           outline: none;-->
-<!--           border-color: var(&#45;&#45;primary-color);-->
-<!--           box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);-->
-<!--           transform: translateY(-1px);-->
-<!--       }-->
-
-<!--       input:hover, select:hover {-->
-<!--           border-color: var(&#45;&#45;primary-color);-->
-<!--       }-->
-
-<!--       button {-->
-<!--           background: linear-gradient(135deg, #3b82f6, #8b5cf6);-->
-<!--           color: white;-->
-<!--           padding: 0.8rem 1.5rem;-->
-<!--           border: none;-->
-<!--           border-radius: 12px;-->
-<!--           cursor: pointer;-->
-<!--           width: 100%;-->
-<!--           font-weight: 600;-->
-<!--           font-size: 1rem;-->
-<!--           text-transform: uppercase;-->
-<!--           letter-spacing: 0.5px;-->
-<!--           transition: all 0.3s ease;-->
-<!--           position: relative;-->
-<!--           overflow: hidden;-->
-<!--       }-->
-
-<!--       button::before {-->
-<!--           content: '';-->
-<!--           position: absolute;-->
-<!--           top: 0;-->
-<!--           left: -100%;-->
-<!--           width: 100%;-->
-<!--           height: 100%;-->
-<!--           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);-->
-<!--           transition: left 0.5s;-->
-<!--       }-->
-
-<!--       button:hover::before {-->
-<!--           left: 100%;-->
-<!--       }-->
-
-<!--       button:hover {-->
-<!--           background: linear-gradient(135deg, #2563eb, #7c3aed);-->
-<!--           transform: translateY(-2px);-->
-<!--           box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);-->
-<!--       }-->
-
-<!--       button:active {-->
-<!--           transform: translateY(0);-->
-<!--       }-->
-
-<!--       .volver {-->
-<!--           display: inline-block;-->
-<!--           margin-top: 1rem;-->
-<!--           color: var(&#45;&#45;text-secondary);-->
-<!--           text-decoration: none;-->
-<!--           font-weight: 500;-->
-<!--           text-align: center;-->
-<!--           width: 100%;-->
-<!--           padding: 0.5rem;-->
-<!--           border-radius: 8px;-->
-<!--           transition: all 0.3s ease;-->
-<!--       }-->
-
-<!--       .volver:hover {-->
-<!--           color: var(&#45;&#45;primary-color);-->
-<!--           background: var(&#45;&#45;bg-secondary);-->
-<!--       }-->
-
-<!--       .table-container {-->
-<!--           max-height: 400px;-->
-<!--           overflow-y: auto;-->
-<!--           border-radius: 12px;-->
-<!--           border: 1px solid var(&#45;&#45;border-color);-->
-<!--       }-->
-
-<!--       table {-->
-<!--           width: 100%;-->
-<!--           border-collapse: collapse;-->
-<!--           margin-top: 0;-->
-<!--           color: var(&#45;&#45;text-secondary);-->
-<!--           background: var(&#45;&#45;bg-primary);-->
-<!--           border-radius: 12px;-->
-<!--           overflow: hidden;-->
-<!--           box-shadow: var(&#45;&#45;shadow);-->
-<!--       }-->
-
-<!--       thead {-->
-<!--           background: linear-gradient(135deg, #3b82f6, #8b5cf6);-->
-<!--           color: white;-->
-<!--           position: sticky;-->
-<!--           top: 0;-->
-<!--           z-index: 10;-->
-<!--       }-->
-
-<!--       th {-->
-<!--           padding: 1rem;-->
-<!--           text-align: left;-->
-<!--           font-weight: 600;-->
-<!--           text-transform: uppercase;-->
-<!--           letter-spacing: 0.5px;-->
-<!--           font-size: 0.9rem;-->
-<!--       }-->
-
-<!--       td {-->
-<!--           padding: 1rem;-->
-<!--           text-align: left;-->
-<!--           border-bottom: 1px solid var(&#45;&#45;border-color);-->
-<!--           transition: background-color 0.2s ease;-->
-<!--       }-->
-
-<!--       tr:hover td {-->
-<!--           background-color: var(&#45;&#45;bg-secondary);-->
-<!--       }-->
-
-<!--       tr:last-child td {-->
-<!--           border-bottom: none;-->
-<!--       }-->
-
-<!--       .ingreso {-->
-<!--           color: var(&#45;&#45;success-color);-->
-<!--           font-weight: 600;-->
-<!--       }-->
-
-<!--       .egreso {-->
-<!--           color: var(&#45;&#45;danger-color);-->
-<!--           font-weight: 600;-->
-<!--       }-->
-
-<!--       /* Scrollbar personalizada */-->
-<!--       ::-webkit-scrollbar {-->
-<!--           width: 8px;-->
-<!--       }-->
-
-<!--       ::-webkit-scrollbar-track {-->
-<!--           background: var(&#45;&#45;bg-secondary);-->
-<!--       }-->
-
-<!--       ::-webkit-scrollbar-thumb {-->
-<!--           background: var(&#45;&#45;primary-color);-->
-<!--           border-radius: 4px;-->
-<!--       }-->
-
-<!--       ::-webkit-scrollbar-thumb:hover {-->
-<!--           background: var(&#45;&#45;primary-hover);-->
-<!--       }-->
-
-<!--       /* Animaciones */-->
-<!--       @keyframes fadeInUp {-->
-<!--           from {-->
-<!--               opacity: 0;-->
-<!--               transform: translateY(30px);-->
-<!--           }-->
-<!--           to {-->
-<!--               opacity: 1;-->
-<!--               transform: translateY(0);-->
-<!--           }-->
-<!--       }-->
-
-<!--       html {-->
-<!--           visibility: visible;-->
-<!--           background: var(&#45;&#45;bg-primary);-->
-<!--       }-->
-
-<!--       @media (max-width: 900px) {-->
-<!--           .contenedor-flex {-->
-<!--               flex-direction: column;-->
-<!--               align-items: center;-->
-<!--               padding: 1rem;-->
-<!--           }-->
-
-<!--           .titulo {-->
-<!--               font-size: 2rem;-->
-<!--           }-->
-
-<!--           .card {-->
-<!--               padding: 1.5rem;-->
-<!--           }-->
-
-<!--           .card.table-card {-->
-<!--               max-width: 100%;-->
-<!--           }-->
-
-<!--           table {-->
-<!--               font-size: 0.9rem;-->
-<!--           }-->
-
-<!--           th, td {-->
-<!--               padding: 0.8rem 0.5rem;-->
-<!--           }-->
-<!--       }-->
-
-<!--       @media (max-width: 480px) {-->
-<!--           .table-container {-->
-<!--               overflow-x: auto;-->
-<!--           }-->
-
-<!--           table {-->
-<!--               min-width: 600px;-->
-<!--           }-->
-
-<!--           .volver {-->
-<!--               display: block;-->
-<!--               text-align: center;-->
-<!--           }-->
-<!--       }-->
-<!--    </style>-->
-<!--    <script>-->
-<!--        // Esto aplica el tema guardado ANTES de que el contenido se pinte-->
-<!--        (function() {-->
-<!--          const savedTheme = localStorage.getItem("theme");-->
-<!--          if (savedTheme) {-->
-<!--            document.documentElement.setAttribute("data-theme", savedTheme);-->
-<!--          } else {-->
-<!--            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;-->
-<!--            document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");-->
-<!--          }-->
-<!--        })();-->
-<!--        document.documentElement.style.visibility = 'visible';-->
-
-<!--        function validarTipoSegunCategoria() {-->
-<!--            const categoriaSelect = document.getElementById('categoria');-->
-<!--            const tipoSelect = document.getElementById('tipo');-->
-
-<!--            if (categoriaSelect && tipoSelect) {-->
-<!--                categoriaSelect.addEventListener('change', function() {-->
-<!--                    const selectedOption = this.options[this.selectedIndex];-->
-
-<!--                    if (selectedOption.value === '') {-->
-<!--                        // Si no hay categoría seleccionada, habilitar el campo tipo-->
-<!--                        tipoSelect.disabled = false;-->
-<!--                        tipoSelect.value = '';-->
-<!--                        tipoSelect.style.opacity = '1';-->
-<!--                        tipoSelect.style.cursor = 'pointer';-->
-<!--                    } else {-->
-<!--                        // Obtener el tipo de la categoría desde el atributo data-tipo-->
-<!--                        const tipoCategoria = selectedOption.getAttribute('data-tipo');-->
-
-<!--                        if (tipoCategoria) {-->
-<!--                            // Actualizar el valor del tipo-->
-<!--                            tipoSelect.value = tipoCategoria;-->
-
-<!--                            // Deshabilitar el campo para evitar modificaciones-->
-<!--                            tipoSelect.disabled = true;-->
-<!--                            tipoSelect.style.opacity = '0.7';-->
-<!--                            tipoSelect.style.cursor = 'not-allowed';-->
-
-<!--                            // Efecto visual para mostrar que se cambió automáticamente-->
-<!--                            tipoSelect.style.borderColor = 'var(&#45;&#45;success-color)';-->
-<!--                            tipoSelect.style.boxShadow = '0 0 0 3px rgba(34, 197, 94, 0.1)';-->
-
-<!--                            setTimeout(() => {-->
-<!--                                tipoSelect.style.borderColor = 'var(&#45;&#45;border-color)';-->
-<!--                                tipoSelect.style.boxShadow = 'none';-->
-<!--                            }, 1500);-->
-<!--                        }-->
-<!--                    }-->
-<!--                });-->
-
-<!--                // Verificar estado inicial al cargar la página-->
-<!--                const initialOption = categoriaSelect.options[categoriaSelect.selectedIndex];-->
-<!--                if (initialOption && initialOption.value !== '') {-->
-<!--                    const tipoCategoria = initialOption.getAttribute('data-tipo');-->
-<!--                    if (tipoCategoria) {-->
-<!--                        tipoSelect.value = tipoCategoria;-->
-<!--                        tipoSelect.disabled = true;-->
-<!--                        tipoSelect.style.opacity = '0.7';-->
-<!--                        tipoSelect.style.cursor = 'not-allowed';-->
-<!--                    }-->
-<!--                }-->
-<!--            }-->
-<!--        }-->
-
-<!--        document.addEventListener('DOMContentLoaded', function() {-->
-<!--            validarTipoSegunCategoria();-->
-<!--        });-->
-<!--    </script>-->
-<!--</head>-->
-<!--<body>-->
-<!--<section layout:fragment="content">-->
-<!--    &lt;!&ndash; Nuevo título principal &ndash;&gt;-->
-<!--    <h2 class="titulo">Gestión de Movimientos</h2>-->
-
-<!--    &lt;!&ndash; Nuevo contenedor flex similar al de categorías &ndash;&gt;-->
-<!--    <div class="contenedor-flex">-->
-<!--        &lt;!&ndash; Formulario a la izquierda &ndash;&gt;-->
-<!--        <div class="card">-->
-<!--            <h3>Registrar Movimiento</h3>-->
-<!--            <form th:action="@{/movimientos/nuevo}" th:object="${movimiento}" method="post">-->
-<!--                <label for="tipo">Tipo</label>-->
-<!--                <select id="tipo" th:field="*{tipo}" required>-->
-<!--                    <option value="" disabled>Selecciona un tipo</option>-->
-<!--                    <option value="Ingreso">💰 Ingreso</option>-->
-<!--                    <option value="Egreso">💸 Egreso</option>-->
-<!--                </select>-->
-
-<!--                <label for="categoria">Categoría</label>-->
-<!--                <select id="categoria" name="categoriaId" th:field="*{categoriaId}" required>-->
-<!--                    <option value="" disabled>Selecciona una categoría</option>-->
-<!--                    <option th:each="cat : ${categorias}"-->
-<!--                            th:value="${cat.id}"-->
-<!--                            th:text="${cat.nombre + ' (' + cat.tipo + ')'}"-->
-<!--                            th:attr="data-tipo=${cat.tipo}"></option>-->
-<!--                </select>-->
-
-<!--                <label for="monto">Monto</label>-->
-<!--                <input id="monto" type="number" step="0.01" th:field="*{monto}" required placeholder="0.00"/>-->
-
-<!--                <label for="fecha">Fecha</label>-->
-<!--                <input id="fecha" type="date" th:field="*{fecha}" required/>-->
-
-<!--                <label for="descripcion">Descripción</label>-->
-<!--                <input id="descripcion" type="text" th:field="*{descripcion}" placeholder="Describe el movimiento..."/>-->
-
-<!--                <button type="submit">✨ Guardar Movimiento</button>-->
-<!--            </form>-->
-<!--            <a class="volver" href="/inicio">← Volver al inicio</a>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Tabla a la derecha &ndash;&gt;-->
-<!--        <div class="card table-card">-->
-<!--            <h3>Historial de Movimientos</h3>-->
-<!--            <div class="table-container">-->
-<!--                <table>-->
-<!--                    <thead>-->
-<!--                    <tr>-->
-<!--                        <th>Fecha</th>-->
-<!--                        <th>Descripción</th>-->
-<!--                        <th>Categoría</th>-->
-<!--                        <th>Tipo</th>-->
-<!--                        <th>Monto</th>-->
-<!--                    </tr>-->
-<!--                    </thead>-->
-<!--                    <tbody>-->
-<!--                    <tr th:each="movimiento : ${movimientos}">-->
-<!--                        <td th:text="${#temporals.format(movimiento.fecha, 'dd/MM/yyyy')}">01/08/2025</td>-->
-<!--                        <td th:text="${movimiento.descripcion}">Descripción</td>-->
-<!--                        <td th:text="${movimiento.categoria?.nombre ?: 'Sin categoría'}">Categoría</td>-->
-<!--                        <td th:text="${movimiento.tipo}" th:classappend="${movimiento.tipo == 'Ingreso'} ? 'ingreso' : 'egreso'">Tipo</td>-->
-<!--                        <td th:text="${'$' + movimiento.monto}" th:classappend="${movimiento.tipo == 'Ingreso'} ? 'ingreso' : 'egreso'">$0.00</td>-->
-<!--                    </tr>-->
-<!--                    </tbody>-->
-<!--                </table>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</section>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" th:attr="data-theme=${modoOscuro ? 'dark' : 'light'}">
 <head>
@@ -557,7 +27,7 @@
             --input-bg: #ffffff;
             --input-border: #e2e8f0;
             --input-focus: #3b82f6;
-            --glass-effect: rgba(255, 255, 255, 0.2);
+            --glass-effect: rgb(0 0 0 / 91%);
             --glass-border: rgba(255, 255, 255, 0.3);
             --primary-color: #2563eb;
             --success-color: #10b981;
@@ -575,23 +45,44 @@
             --input-bg: #1A1A1A;
             --input-border: #333333;
             --input-focus: #3b82f6;
-            --form-gradient: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(17, 17, 17, 0.9) 100%);
-            --input-gradient: linear-gradient(135deg, #1A1A1A 0%, #111111 100%);
+            --form-gradient: linear-gradient(135deg, rgb(26 26 26 / 0%) 0% 0%, rgb(0 0 0) 100% 100%);
+            --input-gradient:  linear-gradient(135deg, #00000000 0%, #11111100 100%);;
             --glass-effect: rgba(26, 26, 26, 0.3);
             --glass-border: rgba(255, 255, 255, 0.1);
             --primary-color: #3b82f6;
-            --success-color: #10b981;
+            --success-color: #38b83c;
             --danger-color: #ef4444;
+        }
+
+        main::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 15% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
         }
 
         /* Main Section Styling */
         section {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             min-height: calc(100vh - var(--navbar-height));
             padding: 1.5rem;
             position: relative;
             overflow-y: auto;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Animated Background */
@@ -602,18 +93,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background:
-                radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(245, 158, 11, 0.04) 0%, transparent 50%);
-            z-index: -1;
-            animation: backgroundFloat 20s ease-in-out infinite;
+
         }
 
-        @keyframes backgroundFloat {
-            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
-            50% { opacity: 0.8; transform: scale(1.05) rotate(1deg); }
-        }
+
 
         /* Title Styling */
         .titulo {
@@ -628,6 +111,7 @@
             background-clip: text;
             animation: titleGradient 4s ease-in-out infinite, slideInDown 0.8s ease-out;
             position: relative;
+            flex-shrink: 0;
         }
 
         @keyframes titleGradient {
@@ -669,9 +153,12 @@
             display: grid;
             grid-template-columns: 1fr 1.5fr;
             gap: 1.5rem;
-            max-width: 1200px;
+            max-width: 1500px;
             margin: 0 auto;
             animation: fadeInUp 0.8s ease-out 0.2s both;
+            align-items: stretch;
+            flex: 1;
+            min-height: 0;
         }
 
         @keyframes fadeInUp {
@@ -697,6 +184,9 @@
             overflow: hidden;
             transition: var(--transition-smooth);
             box-shadow: var(--shadow-elegant);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .card::before {
@@ -745,6 +235,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            flex: 1;
         }
 
         label {
@@ -805,7 +296,7 @@
             transition: var(--transition-smooth);
             position: relative;
             overflow: hidden;
-            margin-top: 0.75rem;
+            margin-top: auto;
         }
 
         button[type="submit"]::before {
@@ -817,7 +308,7 @@
             height: 0;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
             transition: all 0.3s ease;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50);
         }
 
         button[type="submit"]:hover::before {
@@ -854,11 +345,11 @@
             transform: translateX(-3px);
         }
 
-        /* Table Container */
+        /* MEJORAS ESPECÍFICAS PARA LA TABLA - MÁS GRANDE Y CON SCROLL HORIZONTAL */
         .table-container {
-            max-height: 350px;
-            overflow-y: auto;
-            overflow-x: hidden;
+            flex: 1;
+            max-height: 700px; /* Aumentado para hacer más grande el historial */
+            overflow: auto; /* Permite scroll en ambas direcciones */
             border-radius: 10px;
             border: 1px solid var(--border-color);
             background: var(--input-gradient);
@@ -867,7 +358,8 @@
         }
 
         .table-container::-webkit-scrollbar {
-            width: 8px;
+            width: 14px;
+            height: 14px;
         }
 
         .table-container::-webkit-scrollbar-track {
@@ -885,26 +377,35 @@
             background: var(--primary-hover);
         }
 
-        /* Table Styling */
+        .table-container::-webkit-scrollbar-corner {
+            background: var(--bg-secondary);
+        }
+
+        /* Table Styling - MEJORADO */
         table {
             width: 100%;
             border-collapse: collapse;
             background: transparent;
+            min-width: 950px; /* Forzar scroll horizontal cuando sea necesario */
         }
 
         thead {
             background: var(--glass-effect);
             backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         thead th {
-            padding: 1rem 0.75rem;
+            padding: 1.3rem 1.1rem; /* Aumentado para mejor visibilidad */
             text-align: left;
             font-weight: 600;
             color: var(--text-primary);
             border-bottom: 2px solid var(--border-color);
             position: relative;
-            font-size: 0.9rem;
+            font-size: 1.05rem; /* Aumentado para mejor legibilidad */
+            white-space: nowrap;
         }
 
         thead th::after {
@@ -931,20 +432,12 @@
             background: var(--glass-effect);
             transform: scale(1.01);
         }
-     /* Ajuste de compactación */
-        .titulo { margin-bottom: 1rem !important; font-size: 1.6rem !important; }
-        .contenedor-flex { gap: 1rem !important; }
-        .card { padding: 1rem !important; }
-        form { gap: 0.6rem !important; }
-        input, select { padding: 0.5rem 0.75rem !important; font-size: 0.85rem !important; }
-        button[type="submit"] { padding: 0.6rem 1rem !important; font-size: 0.9rem !important; }
-        .table-container { max-height: 200px !important; }
-        thead th, tbody td { padding: 0.4rem 0.4rem !important; font-size: 0.8rem !important; }
 
         tbody td {
-            padding: 0.75rem;
+            padding: 1.2rem 1.1rem; /* Aumentado para mejor visibilidad */
             color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 1rem; /* Aumentado para mejor legibilidad */
+            white-space: nowrap;
         }
 
         /* Type and Amount Styling */
@@ -956,7 +449,7 @@
 
         .ingreso::before {
             content: '↗️';
-            margin-right: 0.25rem;
+            margin-right: 0.4rem;
         }
 
         .egreso {
@@ -967,7 +460,26 @@
 
         .egreso::before {
             content: '↘️';
-            margin-right: 0.25rem;
+            margin-right: 0.4rem;
+        }
+
+        /* Acciones en la tabla - MEJORADAS */
+        tbody td a {
+            display: inline-block;
+            margin-right: 0.8rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            background: var(--glass-effect);
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        tbody td a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
         }
 
         /* Responsive Design */
@@ -979,6 +491,10 @@
 
             section {
                 padding: 1.25rem;
+            }
+
+            .table-container {
+                max-height: 550px;
             }
         }
 
@@ -996,14 +512,14 @@
                 padding: 1rem;
             }
 
-            .table-container {
-                max-height: 300px;
-            }
-
             thead th,
             tbody td {
-                padding: 0.5rem 0.4rem;
-                font-size: 0.85rem;
+                padding: 1rem 0.8rem;
+                font-size: 0.95rem;
+            }
+
+            table {
+                min-width: 850px;
             }
         }
 
@@ -1023,6 +539,13 @@
             button[type="submit"] {
                 font-size: 0.95rem;
             }
+
+            tbody td a {
+                display: block;
+                margin-bottom: 0.5rem;
+                margin-right: 0;
+                text-align: center;
+            }
         }
 
         /* Loading Animation */
@@ -1039,11 +562,11 @@
 
         /* Form Validation Styles */
         input:invalid, select:invalid {
-            border-color: var(--danger-color);
+            border-color: #2f2f2f;
         }
 
         input:valid, select:valid {
-            border-color: var(--success-color);
+            border-color: #4f4f4f;
         }
 
         /* Disabled Input Styling */
@@ -1063,81 +586,53 @@
     </style>
 </head>
 <body>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const categoriaSelect = document.getElementById('categoria');
-        const tipoSelect = document.getElementById('tipo');
-
-        if (categoriaSelect && tipoSelect) {
-            categoriaSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                if (selectedOption && selectedOption.dataset.tipo) {
-                    const categoriaType = selectedOption.dataset.tipo;
-
-                    // Set the tipo select based on category type
-                    if (categoriaType === 'INGRESO' || categoriaType === 'Ingreso') {
-                        tipoSelect.value = 'Ingreso';
-                    } else if (categoriaType === 'EGRESO' || categoriaType === 'Egreso') {
-                        tipoSelect.value = 'Egreso';
-                    }
-
-                    // Disable the tipo select
-                    tipoSelect.disabled = true;
-
-                    // Add visual feedback
-                    tipoSelect.style.background = 'var(--bg-secondary)';
-                    tipoSelect.style.color = 'var(--text-muted)';
-                }
-            });
-
-            // Reset tipo select when categoria is cleared
-            tipoSelect.addEventListener('focus', function() {
-                if (categoriaSelect.value === '') {
-                    this.disabled = false;
-                    this.style.background = '';
-                    this.style.color = '';
-                }
-            });
-
-            // Allow manual reset
-            categoriaSelect.addEventListener('change', function() {
-                if (this.value === '') {
-                    tipoSelect.disabled = false;
-                    tipoSelect.value = '';
-                    tipoSelect.style.background = '';
-                    tipoSelect.style.color = '';
-                }
-            });
-        }
-    });
-</script>
 <section layout:fragment="content">
     <h2 class="titulo">Gestión de Movimientos</h2>
     <div class="contenedor-flex">
         <div class="card">
             <h3>Registrar Movimiento</h3>
-            <form th:action="@{/movimientos/nuevo}" th:object="${movimiento}" method="post">
+            <form th:action="${movimiento.id} != null ? @{/movimientos/editar/{id}(id=${movimiento.id})} : @{/movimientos/nuevo}"
+                  th:object="${movimiento}" method="post">
+
+                <!-- ID oculto para que se mande en edición -->
+                <input type="hidden" th:field="*{id}"/>
+
                 <label for="tipo">Tipo</label>
-                <select id="tipo" th:field="*{tipo}" required>
-                    <option value="" disabled>Selecciona un tipo</option>
+                <select id="tipo" th:field="*{tipo}" disabled required>
+                    <option value="">Selecciona un tipo</option>
                     <option value="Ingreso">💰 Ingreso</option>
                     <option value="Egreso">💸 Egreso</option>
                 </select>
+                <input type="hidden" name="tipo" id="tipo-hidden" th:value="*{tipo}" />
+
                 <label for="categoria">Categoría</label>
                 <select id="categoria" name="categoriaId" th:field="*{categoriaId}" required>
                     <option value="" disabled>Selecciona una categoría</option>
-                    <option th:each="cat : ${categorias}" th:value="${cat.id}" th:text="${cat.nombre + ' (' + cat.tipo + ')'}" th:attr="data-tipo=${cat.tipo}"></option>
+                    <option th:each="cat : ${categorias}"
+                            th:value="${cat.id}"
+                            th:text="${cat.nombre + ' (' + cat.tipo + ')'}"
+                            th:attr="data-tipo=${cat.tipo}">
+                    </option>
                 </select>
+
                 <label for="monto">Monto</label>
                 <input id="monto" type="number" step="0.01" th:field="*{monto}" required placeholder="0.00"/>
+
                 <label for="fecha">Fecha</label>
                 <input id="fecha" type="date" th:field="*{fecha}" required/>
+
                 <label for="descripcion">Descripción</label>
                 <input id="descripcion" type="text" th:field="*{descripcion}" placeholder="Describe el movimiento..."/>
-                <button type="submit">✨ Guardar Movimiento</button>
+
+                <button type="submit"
+                        th:text="${movimiento.id} != null ? '💾 Actualizar Movimiento' : '✨ Guardar Movimiento'">
+                    Guardar
+                </button>
             </form>
+
             <a class="volver" href="/inicio">← Volver al inicio</a>
         </div>
+
         <div class="card table-card">
             <h3>Historial de Movimientos</h3>
             <div class="table-container">
@@ -1149,6 +644,7 @@
                         <th>Categoría</th>
                         <th>Tipo</th>
                         <th>Monto</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -1156,8 +652,15 @@
                         <td th:text="${#temporals.format(movimiento.fecha, 'dd/MM/yyyy')}">01/08/2025</td>
                         <td th:text="${movimiento.descripcion}">Descripción</td>
                         <td th:text="${movimiento.categoria?.nombre ?: 'Sin categoría'}">Categoría</td>
-                        <td th:text="${movimiento.tipo}" th:classappend="${movimiento.tipo == 'Ingreso'} ? 'ingreso' : 'egreso'">Tipo</td>
-                        <td th:text="${'$' + movimiento.monto}" th:classappend="${movimiento.tipo == 'Ingreso'} ? 'ingreso' : 'egreso'">$0.00</td>
+                        <td th:text="${movimiento.tipo}"
+                            th:classappend="${movimiento.tipo == 'Ingreso'} ? 'ingreso' : 'egreso'">Tipo</td>
+                        <td th:text="${'$' + movimiento.monto}"
+                            th:classappend="${movimiento.tipo == 'Ingreso'} ? 'ingreso' : 'egreso'">$0.00</td>
+                        <td>
+                            <a th:href="@{/movimientos/editar/{id}(id=${movimiento.id})}">✏️ Editar</a>
+                            <a th:href="@{/movimientos/eliminar/{id}(id=${movimiento.id})}"
+                               onclick="return confirm('¿Seguro que deseas eliminar este movimiento?')">🗑️ Eliminar</a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -1165,75 +668,98 @@
         </div>
     </div>
 </section>
+
 <script>
-    // Esto aplica el tema guardado ANTES de que el contenido se pinte
-    (function() {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme) {
-        document.documentElement.setAttribute("data-theme", savedTheme);
-      } else {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+    document.addEventListener("DOMContentLoaded", function () {
+      const categoriaSelect = document.getElementById("categoria");
+      const tipoSelect = document.getElementById("tipo");
+      const tipoHidden = document.getElementById("tipo-hidden");
+
+      function actualizarTipoSegunCategoria() {
+          const selectedOption = categoriaSelect.options[categoriaSelect.selectedIndex];
+          const tipo = selectedOption.getAttribute("data-tipo");
+
+          if (tipo) {
+              tipoSelect.value = tipo;
+              tipoHidden.value = tipo;
+          }
       }
-    })();
-    document.documentElement.style.visibility = 'visible';
 
-    function validarTipoSegunCategoria() {
-        const categoriaSelect = document.getElementById('categoria');
-        const tipoSelect = document.getElementById('tipo');
+      // Ejecutar al cargar por si ya hay una categoría seleccionada (modo edición)
+      actualizarTipoSegunCategoria();
 
-        if (categoriaSelect && tipoSelect) {
-            categoriaSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
+      // Escuchar cambios en la categoría
+      categoriaSelect.addEventListener("change", actualizarTipoSegunCategoria);
+  });
 
-                if (selectedOption.value === '') {
-                    // Si no hay categoría seleccionada, habilitar el campo tipo
-                    tipoSelect.disabled = false;
-                    tipoSelect.value = '';
-                    tipoSelect.style.opacity = '1';
-                    tipoSelect.style.cursor = 'pointer';
-                } else {
-                    // Obtener el tipo de la categoría desde el atributo data-tipo
-                    const tipoCategoria = selectedOption.getAttribute('data-tipo');
-
-                    if (tipoCategoria) {
-                        // Actualizar el valor del tipo
-                        tipoSelect.value = tipoCategoria;
-
-                        // Deshabilitar el campo para evitar modificaciones
-                        tipoSelect.disabled = true;
-                        tipoSelect.style.opacity = '0.7';
-                        tipoSelect.style.cursor = 'not-allowed';
-
-                        // Efecto visual para mostrar que se cambió automáticamente
-                        tipoSelect.style.borderColor = 'var(--success-color)';
-                        tipoSelect.style.boxShadow = '0 0 0 3px rgba(34, 197, 94, 0.1)';
-
-                        setTimeout(() => {
-                            tipoSelect.style.borderColor = 'var(--border-color)';
-                            tipoSelect.style.boxShadow = 'none';
-                        }, 1500);
-                    }
-                }
-            });
-
-            // Verificar estado inicial al cargar la página
-            const initialOption = categoriaSelect.options[categoriaSelect.selectedIndex];
-            if (initialOption && initialOption.value !== '') {
-                const tipoCategoria = initialOption.getAttribute('data-tipo');
-                if (tipoCategoria) {
-                    tipoSelect.value = tipoCategoria;
-                    tipoSelect.disabled = true;
-                    tipoSelect.style.opacity = '0.7';
-                    tipoSelect.style.cursor = 'not-allowed';
-                }
-            }
-        }
+  // Esto aplica el tema guardado ANTES de que el contenido se pinte
+  (function() {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
     }
+  })();
+  document.documentElement.style.visibility = 'visible';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        validarTipoSegunCategoria();
-    });
+  function validarTipoSegunCategoria() {
+      const categoriaSelect = document.getElementById('categoria');
+      const tipoSelect = document.getElementById('tipo');
+
+      if (categoriaSelect && tipoSelect) {
+          categoriaSelect.addEventListener('change', function() {
+              const selectedOption = this.options[this.selectedIndex];
+
+              if (selectedOption.value === '') {
+                  // Si no hay categoría seleccionada, habilitar el campo tipo
+                  tipoSelect.disabled = false;
+                  tipoSelect.value = '';
+                  tipoSelect.style.opacity = '1';
+                  tipoSelect.style.cursor = 'pointer';
+              } else {
+                  // Obtener el tipo de la categoría desde el atributo data-tipo
+                  const tipoCategoria = selectedOption.getAttribute('data-tipo');
+
+                  if (tipoCategoria) {
+                      // Actualizar el valor del tipo
+                      tipoSelect.value = tipoCategoria;
+
+                      // Deshabilitar el campo para evitar modificaciones
+                      tipoSelect.disabled = true;
+                      tipoSelect.style.opacity = '0.7';
+                      tipoSelect.style.cursor = 'not-allowed';
+
+                      // Efecto visual para mostrar que se cambió automáticamente
+                      tipoSelect.style.borderColor = 'var(--success-color)';
+                      tipoSelect.style.boxShadow = '0 0 0 3px rgba(34, 197, 94, 0.1)';
+
+                      setTimeout(() => {
+                          tipoSelect.style.borderColor = 'var(--border-color)';
+                          tipoSelect.style.boxShadow = 'none';
+                      }, 1500);
+                  }
+              }
+          });
+
+          // Verificar estado inicial al cargar la página
+          const initialOption = categoriaSelect.options[categoriaSelect.selectedIndex];
+          if (initialOption && initialOption.value !== '') {
+              const tipoCategoria = initialOption.getAttribute('data-tipo');
+              if (tipoCategoria) {
+                  tipoSelect.value = tipoCategoria;
+                  tipoSelect.disabled = true;
+                  tipoSelect.style.opacity = '0.7';
+                  tipoSelect.style.cursor = 'not-allowed';
+              }
+          }
+      }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      validarTipoSegunCategoria();
+  });
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9726e325c2a4139c',t:'MTc1NTc0NTMwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>

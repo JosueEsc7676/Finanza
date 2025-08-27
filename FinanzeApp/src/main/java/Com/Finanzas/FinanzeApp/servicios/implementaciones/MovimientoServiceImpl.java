@@ -9,6 +9,9 @@ import Com.Finanzas.FinanzeApp.servicios.interfaces.MovimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 public class MovimientoServiceImpl implements MovimientoService {
 
@@ -37,7 +40,8 @@ public class MovimientoServiceImpl implements MovimientoService {
         return ingresos - egresos;
     }
 
-    // ✅ Nuevo: guardar movimiento + actualizar meta automáticamente
+    // 🟢 CREATE / UPDATE
+    @Override
     public Movimiento guardarMovimiento(Movimiento movimiento) {
         Movimiento movGuardado = movimientoRepository.save(movimiento);
 
@@ -46,14 +50,33 @@ public class MovimientoServiceImpl implements MovimientoService {
             Meta meta = movGuardado.getCategoria().getMeta();
 
             if (meta.getEstado() != EstadoMeta.COMPLETADA) {
-                // Sumar al monto actual de la meta
                 meta.setMontoActual(meta.getMontoActual() + movGuardado.getMonto());
-
-                // ⚡ Reutilizamos la lógica de MetaService para verificar si se completa
-                metaService.guardarMeta(meta);
+                metaService.guardarMeta(meta); // reutilizamos lógica de metas
             }
         }
 
         return movGuardado;
+    }
+    @Override
+    public List<Movimiento> listarPorUsuarioYRango(Long usuarioId, LocalDate inicio, LocalDate fin) {
+        return movimientoRepository.findByUsuarioIdAndFechaBetween(usuarioId, inicio, fin);
+    }
+
+    // 🔵 READ por id
+    @Override
+    public Movimiento obtenerPorId(Long id) {
+        return movimientoRepository.findById(id).orElse(null);
+    }
+
+    // 🔴 DELETE
+    @Override
+    public void eliminarMovimiento(Long id) {
+        movimientoRepository.deleteById(id);
+    }
+
+    // 🔵 READ listar por usuario
+    @Override
+    public List<Movimiento> listarPorUsuario(Long usuarioId) {
+        return movimientoRepository.findByUsuarioId(usuarioId);
     }
 }

@@ -65,4 +65,10 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
     Double totalGastosPeriodo(@Param("usuarioId") Long usuarioId,
                               @Param("inicio") LocalDate inicio,
                               @Param("fin") LocalDate fin);
+
+    @Query("SELECT m FROM Movimiento m WHERE m.usuario.id = :usuarioId AND m.fecha BETWEEN :inicio AND :fin ORDER BY m.fecha DESC")
+    List<Movimiento> findByUsuarioIdAndFechaBetween(@Param("usuarioId") Long usuarioId,
+                                                    @Param("inicio") LocalDate inicio,
+                                                    @Param("fin") LocalDate fin);
+
 }

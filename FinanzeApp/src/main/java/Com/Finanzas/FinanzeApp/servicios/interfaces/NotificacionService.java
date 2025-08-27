@@ -46,8 +46,8 @@ public class NotificacionService {
         return resultado;
     }
 
-//    @Scheduled(cron = "0 0 9 */3 * *")
-@Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 0 9 */3 * *")
+//@Scheduled(cron = "0 */2 * * * ?")
     public void enviarRecordatoriosIngresosDatos() {
         System.out.println("[v0] Ejecutando recordatorios de ingreso de datos...");
 
@@ -77,8 +77,8 @@ public class NotificacionService {
         System.out.println("[v0] Proceso de recordatorios completado.");
     }
 
-//    @Scheduled(cron = "0 0 8 * * MON")
-@Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 0 8 * * MON")
+//@Scheduled(cron = "0 */2 * * * ?")
     public void enviarRecordatorioSemanal() {
         System.out.println("[v0] Ejecutando recordatorios semanales...");
 
@@ -100,8 +100,8 @@ public class NotificacionService {
     }
 
     // 🔔 NUEVO RECORDATORIO: Cierre de mes
-//    @Scheduled(cron = "0 0 18 L * ?")
-    @Scheduled(cron = "0 */2 * * * ?")
+    @Scheduled(cron = "0 0 18 L * ?")
+//    @Scheduled(cron = "0 */2 * * * ?")
     public void enviarRecordatorioCierreMes() {
         System.out.println("[v0] Ejecutando recordatorio de cierre de mes...");
 

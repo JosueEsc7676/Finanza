@@ -92,16 +92,17 @@
             animation: slideInDown 0.8s ease-out;
         }
 
-        .header-content {
-            background: rgb(0 0 0 / 52%);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            padding: 30px 40px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-        }
+      .header-content {
+    background: var(--glass-effect);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 30px 40px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+}
+
 
         .header-content:hover {
             transform: translateY(-4px);
@@ -136,7 +137,7 @@
         }
 
         .actions-container {
-            background: rgb(0 0 0 / 40%);
+            background: var(--glass-effect);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 24px;
             padding: 25px 30px;
@@ -312,7 +313,7 @@
         }
 
         .empty {
-            background: rgba(255, 255, 255, 0.4);
+            background: var(--glass-effect);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 24px;
             padding: 60px 40px;
@@ -442,7 +443,7 @@
         }
     </style>
 </head>
-<body data-theme="light">
+<body>
 <main layout:fragment="content">
     <section>
         <div class="container">
