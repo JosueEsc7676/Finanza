@@ -5,25 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="53d7141b-e94f-4b51-8ebb-55c5d4ca760c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/java/Com/Finanzas/FinanzeApp/controladores/ConfiguracionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/java/Com/Finanzas/FinanzeApp/controladores/ConfiguracionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/java/Com/Finanzas/FinanzeApp/controladores/GlobalControllerAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/java/Com/Finanzas/FinanzeApp/controladores/GlobalControllerAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/java/Com/Finanzas/FinanzeApp/modelos/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/java/Com/Finanzas/FinanzeApp/modelos/Usuario.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/resources/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/resources/static/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/configuracion.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/configuracion.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/inicio.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/inicio.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/layout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/new_movimiento.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/src/main/resources/templates/new_movimiento.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/controladores/ConfiguracionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/controladores/ConfiguracionController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/controladores/GlobalControllerAdvice.class" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/controladores/GlobalControllerAdvice.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/modelos/Usuario.class" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/modelos/Usuario.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/servicios/interfaces/EmailService.class" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/Com/Finanzas/FinanzeApp/servicios/interfaces/EmailService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/static/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/configuracion.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/configuracion.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/inicio.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/inicio.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/layout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/new_movimiento.html" beforeDir="false" afterPath="$PROJECT_DIR$/FinanzeApp/target/classes/templates/new_movimiento.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +23,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Josue" />
+        <entry key="$PROJECT_DIR$" value="Pruebas" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -63,13 +45,14 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging Pruebas",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/josueescobar/Documents/FinanzaApp/FinanzeApp/src/main/resources/images",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -116,17 +99,6 @@
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="FinanzaApp" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="FinanzaApp" />
-      <option name="filePath" />
-      <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
