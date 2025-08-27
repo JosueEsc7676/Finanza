@@ -1,464 +1,463 @@
+
 <!DOCTYPE html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
-
+<html xmlns:th="http://www.thymeleaf.org" lang="es" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
+    <meta charset="UTF-8">
     <title>Análisis de Gastos</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <style>
         :root {
-            --success-gradient: linear-gradient(135deg, #10b981, #059669);
-            --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
-            --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
-            --info-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
-            --hover-transform: translateY(-4px) scale(1.02);
-            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-radius: 8px;
+            --shadow: 0 2px 6px rgba(0,0,0,0.06);
+            --shadow-lg: 0 6px 14px rgba(0,0,0,0.12);
+            --transition: all 0.25s ease;
         }
 
         [data-theme="light"] {
             --bg-primary: #ffffff;
             --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
             --text-primary: #1e293b;
-            --text-secondary: #64748b;
+            --text-secondary: #475569;
             --text-muted: #94a3b8;
             --border-color: #e2e8f0;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --glass-effect: rgba(255, 255, 255, 0.2);
-            --glass-border: rgba(255, 255, 255, 0.3);
-            --primary-color: #2563eb;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --card-gradient: linear-gradient(135deg, rgb(255 255 255 / 95%) 0%, rgb(255 255 255 / 80%) 100%);
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --table-header: #f1f5f9;
         }
 
         [data-theme="dark"] {
-            --bg-primary: #000000;
-            --bg-secondary: #0a0a0a;
-            --text-primary: #FFFFFF;
-            --text-secondary: #888888;
-            --text-muted: #666666;
-            --border-color: #1a1a1a;
-            --card-bg: rgba(0, 0, 0, 0.95);
-            --card-gradient: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.8) 100%);
-            --glass-effect: rgba(0, 0, 0, 0.3);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --primary-color: #3b82f6;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
+            --bg-primary: #0b0b14;
+            --bg-secondary: #14141e;
+            --bg-tertiary: #1c1c2a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #8a93a5;
+            --border-color: #2f2f40;
+            --card-bg: #14141e;
+            --card-border: #2f2f40;
+            --table-header: #1c1c2a;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
+/* ================================
+   Estilo Global
+================================ */
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Lato', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-size: 14px;
+}
 
-        body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            position: relative;
-        }
+h1, h2, h3 {
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--text-primary);
+}
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 15% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
-            z-index: -1;
-            animation: backgroundPulse 15s ease-in-out infinite;
-        }
+p, label, span {
+    margin: 0;
+    color: var(--text-secondary);
+}
 
-        @keyframes backgroundPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 16px;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            animation: slideUp 0.6s ease-out;
-        }
+/* ================================
+   Toolbar & Filtros
+================================ */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.filter-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 12px 16px;
+    box-shadow: var(--shadow);
+}
 
-        h1 {
-            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 2.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 1rem;
-            animation: fadeIn 0.8s ease-out 0.2s both;
-        }
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
-        .muted {
-            color: var(--text-muted);
-            text-align: center;
-            margin-bottom: 2rem;
-            font-style: italic;
-            animation: fadeIn 0.8s ease-out 0.4s both;
-        }
+.filter-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
 
-        .toolbar {
-            margin-bottom: 2rem;
-            animation: slideIn 0.6s ease-out 0.3s both;
-        }
+.filter-input {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 6px 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 14px;
+}
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
+.filter-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
 
-        .filter-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--border-color);
-            margin-bottom: 1.5rem;
-        }
+/* ================================
+   Botones
+================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 14px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    cursor: pointer;
+}
 
-        .filter-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: end;
-        }
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
 
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            min-width: 150px;
-        }
+.btn-secondary {
+    background: var(--secondary-color);
+    color: #fff;
+}
+.btn-secondary:hover {
+    opacity: 0.9;
+}
 
-        .filter-label {
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+.btn-ghost:hover {
+    background: var(--bg-tertiary);
+}
 
-        .filter-input {
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            transition: var(--transition-smooth);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 0.9rem;
-        }
+/* ================================
+   KPIs
+================================ */
+.kpi-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
 
-        .filter-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            transform: translateY(-1px);
-        }
+.kpi-item {
+    flex: 1;
+    min-width: 140px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 10px 14px;
+    box-shadow: var(--shadow);
+}
 
-        .filter-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+.kpi-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.kpi-value {
+    font-size: 16px;
+    font-weight: 600;
+}
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: none;
-            font-size: 0.9rem;
-        }
+.kpi-value.positive { color: var(--success-color); }
+.kpi-value.negative { color: var(--danger-color); }
 
-        .btn-primary {
-            background: var(--info-gradient);
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
+/* ================================
+   Cards & Grids
+================================ */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+}
 
-        .btn-primary:hover {
-            transform: var(--hover-transform);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-        }
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
 
-        .btn-secondary {
-            background: var(--success-gradient);
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-        }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 16px;
+}
 
-        .btn-secondary:hover {
-            transform: var(--hover-transform);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-        }
+.cards-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 16px;
+}
 
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 2px solid var(--border-color);
-        }
+/* ================================
+   Tablas
+================================ */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
 
-        .btn-ghost:hover {
-            background: var(--glass-effect);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            transform: translateY(-2px);
-        }
+.table th, .table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
 
-        .kpi-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
+.table thead {
+    background: var(--table-header);
+    font-weight: 600;
+}
 
-        .kpi-item {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--border-color);
-            text-align: center;
-            transition: var(--transition-smooth);
-            animation: fadeInUp 0.6s ease-out both;
-        }
+.table tbody tr:hover {
+    background: var(--bg-tertiary);
+}
 
-        .kpi-item:nth-child(1) { animation-delay: 0.1s; }
-        .kpi-item:nth-child(2) { animation-delay: 0.2s; }
-        .kpi-item:nth-child(3) { animation-delay: 0.3s; }
-        .kpi-item:nth-child(4) { animation-delay: 0.4s; }
+/* ================================
+   Badges
+================================ */
+.badge {
+    padding: 2px 8px;
+    border-radius: var(--border-radius);
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge.green { background: var(--success-color); color: #fff; }
+.badge.red { background: var(--danger-color); color: #fff; }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* ================================
+   Responsivo
+================================ */
+@media (max-width: 768px) {
+    .toolbar { flex-direction: column; }
+    .filter-form { flex-direction: column; }
+    .kpi-container { flex-direction: column; }
+}
 
-        .kpi-item:hover {
-            transform: var(--hover-transform);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-        }
-
-        .kpi-label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .kpi-value {
-            display: block;
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .kpi-value.positive {
-            color: var(--success-color);
-        }
-
-        .kpi-value.negative {
-            color: var(--danger-color);
-        }
-
-        .kpis {
-            display: none; /* Ocultar KPIs duplicados */
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--border-color);
-            transition: var(--transition-smooth);
-            animation: slideUp 0.6s ease-out both;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-        }
-
-        .card h3 {
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .cards-2 {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .table th {
-            background: var(--glass-effect);
-            color: var(--text-secondary);
-            font-weight: 600;
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .table tbody tr {
-            transition: var(--transition-smooth);
-        }
-
-        .table tbody tr:hover {
-            background: var(--glass-effect);
-            transform: translateX(5px);
-        }
-
-        .legend {
-            margin-top: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .filter-form {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-group {
-                min-width: auto;
-            }
-
-            .filter-actions {
-                justify-content: center;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .kpi-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .kpi-container {
-                grid-template-columns: 1fr;
-            }
-
-            .table {
-                font-size: 0.8rem;
-            }
-
-            .table th,
-            .table td {
-                padding: 0.5rem;
-            }
-        }
-
-        /* Estilos para la leyenda de gráficos */
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<section layout:fragment="content" style="
+    margin-top: 100px;
+">
+    <div class="container">
+        <h1>Análisis de Gastos</h1>
+        <p class="muted" th:text="${sugerencia}">Sugerencia</p>
+
+        <div class="toolbar">
+            <div class="filter-card">
+                <form class="filter-form" method="get" th:action="@{/analisis}">
+                    <div class="filter-group">
+                        <label class="filter-label">Desde</label>
+                        <input class="filter-input" type="date" name="desde"
+                               th:value="${#temporals.format(desde, 'yyyy-MM-dd')}" required>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Hasta</label>
+                        <input class="filter-input" type="date" name="hasta"
+                               th:value="${#temporals.format(hasta, 'yyyy-MM-dd')}" required>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="icon-filter"></i> Filtrar
+                        </button>
+                        <a class="btn btn-ghost" th:href="@{/analisis}">
+                            <i class="icon-calendar"></i> Mes actual
+                        </a>
+                        <a class="btn btn-secondary"
+                           th:href="@{/analisis/export/csv(desde=${desde}, hasta=${hasta})}">
+                            <i class="icon-download"></i> Exportar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="kpi-container">
+                <div class="kpi-item">
+                    <span class="kpi-label">Total gastos</span>
+                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Categoría principal</span>
+                    <span class="kpi-value" th:text="${kpis.categoriaMasCostosa}">-</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Variación mensual</span>
+                    <span class="kpi-value" th:classappend="${kpis.variacionMesAnterior != null && kpis.variacionMesAnterior < 0} ? 'negative' : 'positive'"
+                          th:text="${(kpis.variacionMesAnterior != null ? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT') : '0.0') + '%'}">
+                0.0%
+            </span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Promedio diario</span>
+                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpis">
+            <div class="card kpi">
+                <h3>Total de gastos</h3>
+                <div class="value"
+                     th:text="${#numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                    0.00
+                </div>
+            </div>
+            <div class="card kpi">
+                <h3>Categoría más costosa</h3>
+                <div class="value" th:text="${kpis.categoriaMasCostosa}">-</div>
+            </div>
+            <div class="card kpi">
+                <h3>Variación vs mes anterior</h3>
+                <div class="value">
+                <span th:text="${
+                     (kpis.variacionMesAnterior != null
+                        ? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT')
+                        : '0.0')
+                     + '%'}">
+                    0.0%
+                </span>
+                </div>
+            </div>
+            <div class="card kpi">
+                <h3>Promedio diario</h3>
+                <div class="value"
+                     th:text="${#numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                    0.00
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid">
+            <div class="card">
+                <h3>Gastos por categoría</h3>
+                <canvas id="chartCategorias" height="220"></canvas>
+                <div class="legend" id="legendCategorias"></div>
+            </div>
+            <div class="card">
+                <h3>Tendencia (últimos meses)</h3>
+                <canvas id="chartTendencia" height="220"></canvas>
+            </div>
+        </div>
+
+        <div class="cards-2" style="margin-top:16px;">
+            <div class="card">
+                <h3>Top 5 gastos</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t : ${top5}">
+                        <td th:text="${t.descripcion}">-</td>
+                        <td th:text="${t.categoria}">-</td>
+                        <td th:text="${t.fecha}">-</td>
+                        <td th:text="${#numbers.formatDecimal(t.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                            0.00
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3>Presupuestos por categoría</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Gastado</th>
+                        <th>Presupuesto</th>
+                        <th>Restante</th>
+                        <th>Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${presupuestos}">
+                        <td th:text="${p.categoria}">-</td>
+                        <td th:text="${#numbers.formatDecimal(p.gasto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td th:text="${#numbers.formatDecimal(p.presupuesto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td th:text="${#numbers.formatDecimal(p.restante ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td>
+                        <span th:classappend="${p.excedido} ? 'badge red' : 'badge green'"
+                              th:text="${p.excedido} ? 'Excedido' : 'OK'">OK</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+            <h3>Detalle por categoría</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>%</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${analisis}">
+                    <td th:text="${item.categoria}">Categoría</td>
+                    <td th:text="${#numbers.formatDecimal(item.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                    <td th:text="${(item.porcentaje != null
+                                ? #numbers.formatDecimal(item.porcentaje, 0, 'COMMA', 1, 'POINT')
+                                : '0.0') + '%'}">0.0%</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
     <script th:inline="javascript">
         const categorias = /*[[${categorias}]]*/ [];
         const totales = /*[[${totales}]]*/ [];
@@ -474,10 +473,7 @@
             type: 'pie',
             data: {
                 labels: categorias,
-                datasets: [{
-                    data: totales,
-                    backgroundColor: categorias.map((_, i) => palette[i % palette.length])
-                }]
+                datasets: [{ data: totales, backgroundColor: categorias.map((_, i) => palette[i % palette.length]) }]
             },
             options: {
                 plugins: {
@@ -499,14 +495,9 @@
         // Leyenda custom
         const legend = document.getElementById('legendCategorias');
         categorias.forEach((c, i) => {
-            const dot = document.createElement('span');
-            dot.className = 'dot';
-            dot.style.background = palette[i % palette.length];
-            const label = document.createElement('span');
-            label.textContent = ` ${c}`;
-            const wrap = document.createElement('span');
-            wrap.style.marginRight='10px';
-            wrap.append(dot,label);
+            const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = palette[i % palette.length];
+            const label = document.createElement('span'); label.textContent = ` ${c}`;
+            const wrap = document.createElement('span'); wrap.style.marginRight='10px'; wrap.append(dot,label);
             legend.appendChild(wrap);
         });
 
@@ -516,146 +507,10 @@
             type: 'line',
             data: {
                 labels: meses,
-                datasets: [{
-                    label: 'Gastos',
-                    data: totalesMensuales,
-                    borderColor: '#4CAF50',
-                    backgroundColor: 'rgba(76,175,80,0.1)',
-                    tension: 0.3,
-                    fill: true
-                }]
+                datasets: [{ label: 'Gastos', data: totalesMensuales, borderColor: '#4CAF50', backgroundColor: 'rgba(76,175,80,0.1)', tension: 0.3, fill: true }]
             },
-            options: {
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true } }
-            }
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
         });
-    </script>
-</head>
-
-<body data-theme="light">
-<section layout:fragment="content" style="margin-top: 100px;">
-    <div class="container">
-        <h1>📊 Análisis de Gastos</h1>
-        <p class="muted" th:text="${sugerencia}">Sugerencia</p>
-        <div class="toolbar">
-            <div class="filter-card">
-                <form class="filter-form" method="get" th:action="@{/analisis}">
-                    <div class="filter-group">
-                        <label class="filter-label">Desde</label>
-                        <input class="filter-input" type="date" name="desde" th:value="${#temporals.format(desde, 'yyyy-MM-dd')}" required>
-                    </div>
-                    <div class="filter-group">
-                        <label class="filter-label">Hasta</label>
-                        <input class="filter-input" type="date" name="hasta" th:value="${#temporals.format(hasta, 'yyyy-MM-dd')}" required>
-                    </div>
-                    <div class="filter-actions">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="icon-filter"></i> Filtrar
-                        </button>
-                        <a class="btn btn-ghost" th:href="@{/analisis}">
-                            <i class="icon-calendar"></i> Mes actual
-                        </a>
-                        <a class="btn btn-secondary" th:href="@{/analisis/export/csv(desde=${desde}, hasta=${hasta})}">
-                            <i class="icon-download"></i> Exportar
-                        </a>
-                    </div>
-                </form>
-            </div>
-            <div class="kpi-container">
-                <div class="kpi-item">
-                    <span class="kpi-label">Total gastos</span>
-                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
-                </div>
-                <div class="kpi-item">
-                    <span class="kpi-label">Categoría principal</span>
-                    <span class="kpi-value" th:text="${kpis.categoriaMasCostosa}">-</span>
-                </div>
-                <div class="kpi-item">
-                    <span class="kpi-label">Variación mensual</span>
-                    <span class="kpi-value" th:classappend="${kpis.variacionMesAnterior != null && kpis.variacionMesAnterior < 0} ? 'negative' : 'positive'"
-                          th:text="${(kpis.variacionMesAnterior!=null?#numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT') : '0.0') + '%'}">0.0%</span>
-                </div>
-                <div class="kpi-item">
-                    <span class="kpi-label">Promedio diario</span>
-                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
-                </div>
-            </div>
-        </div>
-        <div class="kpis">
-            <div class="card kpi">
-                <h3>Total de gastos</h3>
-                <div class="value" th:text="${#numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</div>
-            </div>
-            <div class="card kpi">
-                <h3>Categoría más costosa</h3>
-                <div class="value" th:text="${kpis.categoriaMasCostosa}">-</div>
-            </div>
-            <div class="card kpi">
-                <h3>Variación vs mes anterior</h3>
-                <div class="value">
-                    <span th:text="${(kpis.variacionMesAnterior != null? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT') : '0.0') + '%'}">0.0%</span>
-                </div>
-            </div>
-            <div class="card kpi">
-                <h3>Promedio diario</h3>
-                <div class="value" th:text="${#numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</div>
-            </div>
-        </div>
-        <div class="grid">
-            <div class="card">
-                <h3>Gastos por categoría</h3>
-                <canvas id="chartCategorias" height="220"></canvas>
-                <div class="legend" id="legendCategorias"></div>
-            </div>
-            <div class="card">
-                <h3>Tendencia (últimos meses)</h3>
-                <canvas id="chartTendencia" height="220"></canvas>
-            </div>
-        </div>
-        <div class="cards-2" style="margin-top:16px;">
-            <div class="card">
-                <h3>🏆 Top 5 gastos</h3>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Descripción</th>
-                        <th>Categoría</th>
-                        <th>Fecha</th>
-                        <th>Monto</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="t : ${top5}">
-                        <td th:text="${t.descripcion}">-</td>
-                        <td th:text="${t.categoria}">-</td>
-                        <td th:text="${t.fecha}">-</td>
-                        <td th:text="${#numbers.formatDecimal(t.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="card" style="margin-top:16px;">
-            <h3>📋 Detalle por categoría</h3>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Categoría</th>
-                    <th>Monto</th>
-                    <th>%</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item : ${analisis}">
-                    <td th:text="${item.categoria}">Categoría</td>
-                    <td th:text="${#numbers.formatDecimal(item.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
-                    <td th:text="${(item.porcentaje != null? #numbers.formatDecimal(item.porcentaje, 0, 'COMMA', 1, 'POINT') : '0.0') + '%'}">0.0%</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9758130066b47644',t:'MTc1NjI2MTA2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    </script></section>
+</body>
 </html>

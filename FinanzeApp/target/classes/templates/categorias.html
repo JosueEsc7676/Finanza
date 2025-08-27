@@ -2,381 +2,380 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8">
-  <title>Gestión de Categorías</title>
-  <style>
-    /* Actualizando estilos para que coincidan con el diseño del layout principal */
-    .titulo {
-        text-align: center;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 2rem;
-        color: var(--text-primary);
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        position: relative;
-    }
+    <meta charset="UTF-8">
+    <title>Gestión de Categorías</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    .titulo::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 4px;
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        border-radius: 2px;
-    }
+        :root {
+            --success-gradient: linear-gradient(135deg, #10b981, #059669);
+            --danger-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+            --warning-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+            --info-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+            --hover-transform: translateY(-4px) scale(1.02);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    .contenedor-flex {
-        display: flex;
-        justify-content: center;
-        gap: 2rem;
-        flex-wrap: wrap;
-        padding: 2rem 1rem;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-effect: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --primary-color: #2563eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --card-gradient: linear-gradient(135deg, rgb(255 255 255 / 95%) 0%, rgb(255 255 255 / 80%) 100%);
+        }
 
-    .card {
-        background: var(--bg-primary);
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: var(--shadow);
-        width: 100%;
-        max-width: 450px;
-        border: 1px solid var(--border-color);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        animation: fadeInUp 0.6s ease-out;
-    }
+        [data-theme="dark"] {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --text-primary: #FFFFFF;
+            --text-secondary: #888888;
+            --text-muted: #666666;
+            --border-color: #1a1a1a;
+            --card-bg: rgb(0 0 0 / 25%);
+            --card-gradient: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.8) 100%);
+            --glass-effect: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
 
-    .card.table-card {
-        max-width: 650px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
 
-    .table-container {
-        max-height: 400px;
-        overflow-y: auto;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-    }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
 
-    .card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 15% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: backgroundPulse 15s ease-in-out infinite;
+        }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-lg);
-    }
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
 
-    .card:nth-child(2) {
-        animation-delay: 0.1s;
-    }
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            animation: slideUp 0.6s ease-out;
+        }
 
-    h3 {
-        margin-top: 0;
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        color: var(--text-primary);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    h3::before {
-        content: '📋';
-        font-size: 1.2rem;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    input, select {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        margin-bottom: 1.5rem;
-        border-radius: 12px;
-        border: 2px solid var(--border-color);
-        background: var(--bg-secondary);
-        color: var(--text-primary);
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-sizing: border-box;
-    }
-
-    input:focus, select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        transform: translateY(-1px);
-    }
-
-    input:hover, select:hover {
-        border-color: var(--primary-color);
-    }
-
-    button {
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        color: white;
-        padding: 0.8rem 1.5rem;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        width: 100%;
-        font-weight: 600;
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s;
-    }
-
-    button:hover::before {
-        left: 100%;
-    }
-
-    button:hover {
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-    }
-
-    button:active {
-        transform: translateY(0);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 0;
-        color: var(--text-secondary);
-        background: var(--bg-primary);
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: var(--shadow);
-    }
-
-    thead {
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        color: white;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-
-    th {
-        padding: 1rem;
-        text-align: left;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-size: 0.9rem;
-    }
-
-    td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid var(--border-color);
-        transition: background-color 0.2s ease;
-    }
-
-    tr:hover td {
-        background-color: var(--bg-secondary);
-    }
-
-    tr:last-child td {
-        border-bottom: none;
-    }
-
-    .btn {
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 600;
-        text-decoration: none;
-        margin-right: 0.5rem;
-        display: inline-block;
-        transition: all 0.3s ease;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-
-    .btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .btn.edit {
-        background: linear-gradient(135deg, #10b981, #059669);
-    }
-
-    .btn.edit:hover {
-        background: linear-gradient(135deg, #059669, #047857);
-    }
-
-    .btn.delete {
-        background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    .btn.delete:hover {
-        background: linear-gradient(135deg, #dc2626, #b91c1c);
-    }
-
-    @media (max-width: 900px) {
-        .contenedor-flex {
-            flex-direction: column;
-            align-items: center;
-            padding: 1rem;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .titulo {
-            font-size: 2rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .contenedor-flex {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            background: var(--card-bg);
+        }
+
+        @media (max-width: 968px) {
+            .contenedor-flex {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
             padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: var(--transition-smooth);
+            animation: slideUp 0.6s ease-out both;
         }
 
-        .card.table-card {
-            max-width: 100%;
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
         }
 
-        table {
+        .card h3 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        label {
+            color: var(--text-secondary);
+            font-weight: 500;
             font-size: 0.9rem;
         }
 
-        th, td {
-            padding: 0.8rem 0.5rem;
+        input, select {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition-smooth);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
         }
-    }
 
-    /* Scrollbar personalizada */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: var(--bg-secondary);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: var(--primary-color);
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--primary-hover);
-    }
-
-    /* Animaciones */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+            font-size: 0.9rem;
+            background: var(--info-gradient);
+            color: white;
+            margin-top: 0.5rem;
         }
-    }
-  </style>
+
+        button:hover {
+            transform: var(--hover-transform);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .table-card {
+            overflow: hidden;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table th {
+            background: var(--glass-effect);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        table tbody tr {
+            transition: var(--transition-smooth);
+        }
+
+        table tbody tr:hover {
+            background: var(--glass-effect);
+            transform: translateX(5px);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        .btn.edit {
+            background: var(--info-gradient);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn.edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn.delete {
+            background: var(--danger-gradient);
+            color: white;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn.delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 1rem;
+            }
+
+            .titulo {
+                font-size: 2rem;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            table th,
+            table td {
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contenedor-flex {
+                gap: 1rem;
+            }
+
+            .btn {
+                display: block;
+                margin-bottom: 0.5rem;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <section layout:fragment="content">
-  <h2 class="titulo">Gestión de Categorías</h2>
+    <h2 class="titulo">Gestión de Categorías</h2>
 
-  <div class="contenedor-flex">
-    <!-- Formulario a la izquierda -->
-    <div class="card">
-      <h3 th:text="${categoria.id != null} ? 'Editar Categoría' : 'Nueva Categoría'"></h3>
-      <form th:action="${categoria.id != null} ? @{'/categorias/editar/' + ${categoria.id}} : @{/categorias/nueva}"
-            th:object="${categoria}" method="post">
-        <label for="nombre">Nombre</label>
-        <input type="text" id="nombre" required th:field="*{nombre}" />
+    <div class="contenedor-flex">
+        <!-- Formulario a la izquierda -->
+        <div class="card">
+            <h3 th:text="${categoria.id != null} ? 'Editar Categoría' : 'Nueva Categoría'"></h3>
+            <form th:action="${categoria.id != null} ? @{'/categorias/editar/' + ${categoria.id}} : @{/categorias/nueva}"
+                  th:object="${categoria}" method="post">
+                <label for="nombre">Nombre</label>
+                <input style="
+    background-color: #00000029;
+" type="text" id="nombre" required th:field="*{nombre}" />
 
-        <label for="tipo">Tipo</label>
-        <select id="tipo" required th:field="*{tipo}">
-          <option value="" disabled th:if="${categoria.tipo == null}">Selecciona un tipo</option>
-          <option value="Ingreso">Ingreso</option>
-          <option value="Egreso">Egreso</option>
-        </select>
-          <label for="meta">Meta asociada (opcional)</label>
-          <select id="meta" name="metaId">
-              <option value="" th:selected="${categoria.meta == null}">-- Ninguna --</option>
-              <option th:each="meta : ${metas}"
-                      th:value="${meta.id}"
-                      th:text="${meta.titulo}"
-                      th:selected="${categoria.meta != null and categoria.meta.id == meta.id}">
-              </option>
-          </select>
+                <label for="tipo">Tipo</label>
+                <select id="tipo" required th:field="*{tipo}">
+                    <option value="" disabled th:if="${categoria.tipo == null}">Selecciona un tipo</option>
+                    <option value="Ingreso">Ingreso</option>
+                    <option value="Egreso">Egreso</option>
+                </select>
+                <label for="meta">Meta asociada (opcional)</label>
+                <select id="meta" name="metaId">
+                    <option value="" th:selected="${categoria.meta == null}">-- Ninguna --</option>
+                    <option th:each="meta : ${metas}"
+                            th:value="${meta.id}"
+                            th:text="${meta.titulo}"
+                            th:selected="${categoria.meta != null and categoria.meta.id == meta.id}">
+                    </option>
+                </select>
 
-        <button type="submit" th:text="${categoria.id != null} ? 'Actualizar' : 'Crear'">Crear</button>
-      </form>
+                <button type="submit" th:text="${categoria.id != null} ? 'Actualizar' : 'Crear'">Crear</button>
+            </form>
+        </div>
+
+        <!-- Tabla a la derecha -->
+        <div class="card table-card">
+            <h3>Categorías Registradas</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="cat : ${categorias}">
+                        <td th:text="${cat.nombre}"></td>
+                        <td th:text="${cat.tipo}"></td>
+                        <td>
+                            <a th:href="@{'/categorias?edit=' + ${cat.id}}" class="btn edit">Editar</a>
+                            <a th:href="@{'/categorias/eliminar/' + ${cat.id}}" class="btn delete"
+                               onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">Eliminar</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <!-- Tabla a la derecha -->
-    <div class="card table-card">
-      <h3>Categorías Registradas</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Acciones</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="cat : ${categorias}">
-            <td th:text="${cat.nombre}"></td>
-            <td th:text="${cat.tipo}"></td>
-            <td>
-              <a th:href="@{'/categorias?edit=' + ${cat.id}}" class="btn edit">Editar</a>
-              <a th:href="@{'/categorias/eliminar/' + ${cat.id}}" class="btn delete"
-                 onclick="return confirm('¿Estás seguro de eliminar esta categoría?')">Eliminar</a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </section>
 
 </body>

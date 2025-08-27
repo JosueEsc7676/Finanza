@@ -1,103 +1,516 @@
- <style>
-        .titulo {
-            text-align: center;
-            font-family: 'Raleway', sans-serif;
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es" layout:decorate="~{layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Análisis de Gastos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --border-radius: 8px;
+            --shadow: 0 2px 6px rgba(0,0,0,0.06);
+            --shadow-lg: 0 6px 14px rgba(0,0,0,0.12);
+            --transition: all 0.25s ease;
         }
 
-        .contenedor-flex {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            padding: 1rem;
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --table-header: #f1f5f9;
         }
 
-        .card {
-            background-color: var(--card-bg, #1f2937);
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 450px;
+        [data-theme="dark"] {
+            --bg-primary: #0b0b14;
+            --bg-secondary: #14141e;
+            --bg-tertiary: #1c1c2a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #8a93a5;
+            --border-color: #2f2f40;
+            --card-bg: #14141e;
+            --card-border: #2f2f40;
+            --table-header: #1c1c2a;
         }
 
-        h3 {
-            margin-top: 0;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
+/* ================================
+   Estilo Global
+================================ */
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Lato', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-size: 14px;
+}
 
-        label {
-            display: block;
-            margin-bottom: 0.25rem;
-            font-weight: bold;
-            color: #fff;
-        }
+h1, h2, h3 {
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--text-primary);
+}
 
-        input, select {
-            width: 100%;
-            padding: 0.6rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            border: none;
-            background-color: #111827;
-            color: #fff;
-        }
+p, label, span {
+    margin: 0;
+    color: var(--text-secondary);
+}
 
-        button {
-            background-color: #6366f1;
-            color: white;
-            padding: 0.6rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 16px;
+}
 
-        button:hover {
-            background-color: #4f46e5;
-        }
+/* ================================
+   Toolbar & Filtros
+================================ */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            color: #fff;
-        }
+.filter-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 12px 16px;
+    box-shadow: var(--shadow);
+}
 
-        thead {
-            background-color: #111827;
-        }
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+}
 
-        th, td {
-            padding: 0.8rem;
-            text-align: left;
-        }
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
-        .btn {
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-            margin-right: 0.5rem;
-        }
+.filter-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
 
-        .btn.edit {
-            background-color: #10b981;
-        }
+.filter-input {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 6px 10px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 14px;
+}
 
-        .btn.delete {
-            background-color: #ef4444;
-        }
+.filter-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
 
-        @media (max-width: 900px) {
-            .contenedor-flex {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
+/* ================================
+   Botones
+================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 14px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    transition: var(--transition);
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    color: #fff;
+}
+.btn-secondary:hover {
+    opacity: 0.9;
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+.btn-ghost:hover {
+    background: var(--bg-tertiary);
+}
+
+/* ================================
+   KPIs
+================================ */
+.kpi-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.kpi-item {
+    flex: 1;
+    min-width: 140px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 10px 14px;
+    box-shadow: var(--shadow);
+}
+
+.kpi-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.kpi-value {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.kpi-value.positive { color: var(--success-color); }
+.kpi-value.negative { color: var(--danger-color); }
+
+/* ================================
+   Cards & Grids
+================================ */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+}
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 16px;
+}
+
+.cards-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 16px;
+}
+
+/* ================================
+   Tablas
+================================ */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table th, .table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.table thead {
+    background: var(--table-header);
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-tertiary);
+}
+
+/* ================================
+   Badges
+================================ */
+.badge {
+    padding: 2px 8px;
+    border-radius: var(--border-radius);
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge.green { background: var(--success-color); color: #fff; }
+.badge.red { background: var(--danger-color); color: #fff; }
+
+/* ================================
+   Responsivo
+================================ */
+@media (max-width: 768px) {
+    .toolbar { flex-direction: column; }
+    .filter-form { flex-direction: column; }
+    .kpi-container { flex-direction: column; }
+}
+
     </style>
+</head>
+<body>
+<section layout:fragment="content" style="
+    margin-top: 100px;
+">
+    <div class="container">
+        <h1>Análisis de Gastos</h1>
+        <p class="muted" th:text="${sugerencia}">Sugerencia</p>
+
+        <div class="toolbar">
+            <div class="filter-card">
+                <form class="filter-form" method="get" th:action="@{/analisis}">
+                    <div class="filter-group">
+                        <label class="filter-label">Desde</label>
+                        <input class="filter-input" type="date" name="desde"
+                               th:value="${#temporals.format(desde, 'yyyy-MM-dd')}" required>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">Hasta</label>
+                        <input class="filter-input" type="date" name="hasta"
+                               th:value="${#temporals.format(hasta, 'yyyy-MM-dd')}" required>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="icon-filter"></i> Filtrar
+                        </button>
+                        <a class="btn btn-ghost" th:href="@{/analisis}">
+                            <i class="icon-calendar"></i> Mes actual
+                        </a>
+                        <a class="btn btn-secondary"
+                           th:href="@{/analisis/export/csv(desde=${desde}, hasta=${hasta})}">
+                            <i class="icon-download"></i> Exportar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="kpi-container">
+                <div class="kpi-item">
+                    <span class="kpi-label">Total gastos</span>
+                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Categoría principal</span>
+                    <span class="kpi-value" th:text="${kpis.categoriaMasCostosa}">-</span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Variación mensual</span>
+                    <span class="kpi-value" th:classappend="${kpis.variacionMesAnterior != null && kpis.variacionMesAnterior < 0} ? 'negative' : 'positive'"
+                          th:text="${(kpis.variacionMesAnterior != null ? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT') : '0.0') + '%'}">
+                0.0%
+            </span>
+                </div>
+                <div class="kpi-item">
+                    <span class="kpi-label">Promedio diario</span>
+                    <span class="kpi-value" th:text="${'$' + #numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpis">
+            <div class="card kpi">
+                <h3>Total de gastos</h3>
+                <div class="value"
+                     th:text="${#numbers.formatDecimal(kpis.totalGastos ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                    0.00
+                </div>
+            </div>
+            <div class="card kpi">
+                <h3>Categoría más costosa</h3>
+                <div class="value" th:text="${kpis.categoriaMasCostosa}">-</div>
+            </div>
+            <div class="card kpi">
+                <h3>Variación vs mes anterior</h3>
+                <div class="value">
+                <span th:text="${
+                     (kpis.variacionMesAnterior != null
+                        ? #numbers.formatDecimal(kpis.variacionMesAnterior, 0, 'COMMA', 1, 'POINT')
+                        : '0.0')
+                     + '%'}">
+                    0.0%
+                </span>
+                </div>
+            </div>
+            <div class="card kpi">
+                <h3>Promedio diario</h3>
+                <div class="value"
+                     th:text="${#numbers.formatDecimal(kpis.promedioDiario ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                    0.00
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid">
+            <div class="card">
+                <h3>Gastos por categoría</h3>
+                <canvas id="chartCategorias" height="220"></canvas>
+                <div class="legend" id="legendCategorias"></div>
+            </div>
+            <div class="card">
+                <h3>Tendencia (últimos meses)</h3>
+                <canvas id="chartTendencia" height="220"></canvas>
+            </div>
+        </div>
+
+        <div class="cards-2" style="margin-top:16px;">
+            <div class="card">
+                <h3>Top 5 gastos</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Categoría</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="t : ${top5}">
+                        <td th:text="${t.descripcion}">-</td>
+                        <td th:text="${t.categoria}">-</td>
+                        <td th:text="${t.fecha}">-</td>
+                        <td th:text="${#numbers.formatDecimal(t.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">
+                            0.00
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card">
+                <h3>Presupuestos por categoría</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Gastado</th>
+                        <th>Presupuesto</th>
+                        <th>Restante</th>
+                        <th>Estado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${presupuestos}">
+                        <td th:text="${p.categoria}">-</td>
+                        <td th:text="${#numbers.formatDecimal(p.gasto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td th:text="${#numbers.formatDecimal(p.presupuesto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td th:text="${#numbers.formatDecimal(p.restante ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                        <td>
+                        <span th:classappend="${p.excedido} ? 'badge red' : 'badge green'"
+                              th:text="${p.excedido} ? 'Excedido' : 'OK'">OK</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+            <h3>Detalle por categoría</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Categoría</th>
+                    <th>Monto</th>
+                    <th>%</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${analisis}">
+                    <td th:text="${item.categoria}">Categoría</td>
+                    <td th:text="${#numbers.formatDecimal(item.monto ?: 0, 0, 'COMMA', 2, 'POINT')}">0.00</td>
+                    <td th:text="${(item.porcentaje != null
+                                ? #numbers.formatDecimal(item.porcentaje, 0, 'COMMA', 1, 'POINT')
+                                : '0.0') + '%'}">0.0%</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        const categorias = /*[[${categorias}]]*/ [];
+        const totales = /*[[${totales}]]*/ [];
+        const meses = /*[[${meses}]]*/ [];
+        const totalesMensuales = /*[[${totalesMensuales}]]*/ [];
+
+        // Paleta de colores
+        const palette = ['#FF6384','#36A2EB','#FFCE56','#66BB6A','#9575CD','#FFA726','#8D6E63','#26C6DA','#EC407A','#AB47BC'];
+
+        // Pie: gastos por categoría
+        const ctxCat = document.getElementById('chartCategorias');
+        const chartCategorias = new Chart(ctxCat, {
+            type: 'pie',
+            data: {
+                labels: categorias,
+                datasets: [{ data: totales, backgroundColor: categorias.map((_, i) => palette[i % palette.length]) }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = totales.reduce((a,b)=>a+b,0);
+                                const pct = total > 0 ? (value/total*100) : 0;
+                                return `${context.label}: ${value.toFixed(2)} USD (${pct.toFixed(1)}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Leyenda custom
+        const legend = document.getElementById('legendCategorias');
+        categorias.forEach((c, i) => {
+            const dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = palette[i % palette.length];
+            const label = document.createElement('span'); label.textContent = ` ${c}`;
+            const wrap = document.createElement('span'); wrap.style.marginRight='10px'; wrap.append(dot,label);
+            legend.appendChild(wrap);
+        });
+
+        // Línea: tendencia mensual
+        const ctxTrend = document.getElementById('chartTendencia');
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: meses,
+                datasets: [{ label: 'Gastos', data: totalesMensuales, borderColor: '#4CAF50', backgroundColor: 'rgba(76,175,80,0.1)', tension: 0.3, fill: true }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+    </script></section>
+</body>
+</html>

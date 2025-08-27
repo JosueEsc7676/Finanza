@@ -496,9 +496,10 @@
         .nav-links.show {
             display: flex;
         }
-        .text-white {
+     .textwhite {
     --tw-text-opacity: 1;
-    color: #1e293b;
+    color: rgb(47 103 38);
+}
 }
     </style>
     <script>
@@ -550,7 +551,7 @@
         </ul>
 
             <div class="nav-controls flex items-center space-x-4">
-                <a th:href="@{/notificaciones}" class="relative text-white hover:text-blue-400 inline-block">
+                <a th:href="@{/notificaciones}" class="relative textwhite hover:text-blue-400 inline-block">
                     <i class="fa-solid fa-bell text-xl"></i>
                     <span th:if="${tieneNotificaciones}"
                           class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white"></span>
