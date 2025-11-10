@@ -35,7 +35,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String mostrarLogin() {
-        return "Login";
+        return "login";
     }
 
 
