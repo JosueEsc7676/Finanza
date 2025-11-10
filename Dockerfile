@@ -1,24 +1,37 @@
-# Etapa 1: Compilar el proyecto con Maven
+# =============================
+# Etapa 1: Construir la aplicación
+# =============================
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
+
+# Configurar el entorno de trabajo
 WORKDIR /app
 
-# Copiar pom.xml y descargar dependencias primero (cache eficiente)
+# Copiar el descriptor de Maven y resolver dependencias (cache eficiente)
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
-# Copiar el código fuente y compilar
+# Copiar el código fuente
 COPY src ./src
+
+# Configurar UTF-8 para evitar errores de codificación
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# Compilar el proyecto (sin ejecutar tests)
 RUN mvn clean package -DskipTests
 
-# Etapa 2: Crear una imagen ligera para ejecutar la app
+# =============================
+# Etapa 2: Crear una imagen ligera para ejecución
+# =============================
 FROM eclipse-temurin:21-jdk
+
 WORKDIR /app
 
-# Copiar el jar compilado desde la primera etapa
+# Copiar el JAR construido desde la etapa anterior
 COPY --from=builder /app/target/*.jar app.jar
 
-# Puerto de ejecución
+# Exponer el puerto que usará la aplicación
 EXPOSE 8080
 
-# Comando para ejecutar
+# Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
